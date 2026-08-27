@@ -1,18 +1,51 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+ * PRAAMS design tokens (brief §9):
+ * deep navy primary, neutral gray surfaces/text, desaturated semantic colors
+ * for appointment statuses and role badges.
+ */
+@theme {
+  /* Brand — deep navy (#1F3864) */
+  --color-navy: #1f3864;
+  --color-navy-dark: #16294a;
+  --color-navy-light: #2e4e85;
+  --color-navy-tint: #e8edf5;
+
+  /* Appointment status palette (desaturated) */
+  --color-status-scheduled: #3b5b92;
+  --color-status-completed: #2f7d5d;
+  --color-status-cancelled: #a64541;
+  --color-status-no-show: #8a6d3b;
+
+  /* Role badge palette (desaturated) */
+  --color-role-receptionist: #2f6f6a;
+  --color-role-healthcare: #5f5596;
+  --color-role-administrator: #1f3864;
+
+  /* Single legible sans-serif everywhere (§9 Typography) */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 }
 
 body {
-  background: #ffffff;
-  color: #171717;
-  font-family: Arial, Helvetica, sans-serif;
   margin: 0;
-  padding: 0;
 }
 
-* {
-  box-sizing: border-box;
+/* Keyboard accessibility with a visible focus ring (§9) */
+:focus-visible {
+  outline: 2px solid var(--color-navy-light);
+  outline-offset: 2px;
 }
+
+/* Respect prefers-reduced-motion (§9) */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
