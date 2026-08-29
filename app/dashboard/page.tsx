@@ -41,12 +41,14 @@ const MODULES: ModuleCard[] = [
   {
     title: "Patients",
     description: "Register, search and maintain patient demographic records.",
-    phase: 3,
+    href: "/patients",
+    ready: true,
   },
   {
     title: "Medical records",
     description: "Add clinical entries and review a patient's full history.",
-    phase: 3,
+    href: "/patients",
+    ready: true,
   },
   {
     title: "Appointments",

@@ -80,7 +80,9 @@ scripts/seed.ts        Idempotent seed via GoTrue admin API (`npm run db:seed`)
       lockout after 5 failures (UC-01), idle-session termination (FR-05)
 - [x] **Phase 2 — User Management:** staff CRUD with guardrails (UC-02),
       configurable role-permission matrix (UC-03), audited throughout
-- [ ] Phase 3 — Patient Records (UC-04–08)
+- [x] **Phase 3 — Patient Records:** register w/ duplicate flagging (UC-04),
+      search by name/code/phone (UC-06), view/update demographics (UC-05),
+      permanent clinical entries (UC-07) + full history (UC-08)
 - [ ] Phase 4 — Appointments (UC-09–11)
 - [ ] Phase 5 — Reporting (UC-12)
 - [ ] Phase 6 — Hardening: audit coverage, RLS verification, a11y/responsive pass
