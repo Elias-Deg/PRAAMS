@@ -221,7 +221,8 @@ Add per-feature indexes in that same file style going forward.
 
 ### 6.4 Audit action catalogue (keep appending)
 
-INSERT_PATIENT · INSERT_MEDICAL_RECORD · INSERT_APPOINTMENT · CREATE_STAFF ·
+INSERT_PATIENT · UPDATE_PATIENT · INSERT_MEDICAL_RECORD · INSERT_APPOINTMENT ·
+RESCHEDULE_APPOINTMENT · CANCEL_APPOINTMENT · CREATE_STAFF ·
 UPDATE_STAFF · DEACTIVATE_STAFF · REACTIVATE_STAFF · DELETE_STAFF ·
 UPDATE_ROLE_PERMISSION role=… permission=… enabled=true|false
 
@@ -267,7 +268,7 @@ every toggle audited.
 ## 8. Feature state ledger (update after EVERY task)
 
 **Phases**: 0 Foundation ✅ · 1 Auth ✅ · 2 User Management ✅ · 3 Patient Records ✅
-· 4 Appointments ⬜ · 5 Reporting ⬜ · 6 Hardening ⬜
+· 4 Appointments ✅ · 5 Reporting ✅ · 6 Hardening ⬜
 
 | Route | Use case | State | Key notes |
 |---|---|---|---|
@@ -280,8 +281,10 @@ every toggle audited.
 | `/patients/[id]` | UC-05 view/UC-08 | ✅ | demographics card, registrar attribution, permanent history timeline w/ author embed |
 | `/patients/[id]/edit` | UC-05 update | ✅ | gated `patients.edit`; RLS-path update; audit UPDATE_PATIENT |
 | `/patients/[id]/records/new` | UC-07 | 🚧 form shipped · E2E of addMedicalRecord pending manual browser pass | gated `records.add`; permanence warning inline |
-| `/appointments*` | UC-09–11 | ⬜ Phase 4 | slot availability, double-book prevention, calendar |
-| `/admin/reports` | UC-12 | ⬜ Phase 5 | date-range stats + CSV/PDF export |
+| `/appointments` | UC-11 | ✅ | day calendar, prev/next + HP filter, status chips, empty state CTA |
+| `/appointments/new` | UC-09 | ✅ | patient combobox, slot grid via /api/appointments/slots, race→23505 handling |
+| `/appointments/[id]` | UC-10 | ✅ | reschedule w/ excludeIso, confirm-dialog cancel, terminal read-only states |
+| `/admin/reports` (+`/export`) | UC-12 | ✅ | 3 report types over date ranges; CSV export w/ attachment filename; print/save-as-PDF via PrintButton; 500-row cap w/ truncation notice; 403/401 JSON on export route |
 
 Integration verification highlights already passed: proxy unauth redirects ·
 login renders · all three roles sign in · lockout SQL lifecycle · admin staff
@@ -328,9 +331,9 @@ insert-record 403, receptionist insert-patient 201 w/ sequence code, HP patch
   (`tsx --env-file=.env.local scripts/seed.ts`, idempotent).
 - Migrations are applied by pasting each file into Supabase Dashboard → SQL Editor,
   oldest-first. Applied log: #000000 init · #000010 login security ·
-  #000020 role permissions/FK relaxations (all applied as of Phase 2 close).
-  New migrations follow name pattern `YYYYMMDDHHMMSS_topic.sql` and must be added
-  to README + applied-log here once pasted.
+  #000020 role permissions/FK relaxations · #000030 appointment slot uniqueness
+  (all applied). New migrations follow name pattern `YYYYMMDDHHMMSS_topic.sql` and
+  must be added to README + applied-log here once pasted.
 - Node ≥ 20 required (tsx --env-file). Windows dev machine.
 - Build/lint gates: `npm run lint`, `npm run build` must be green before done.
 
@@ -363,12 +366,13 @@ style for future phase sign-offs.
 
 ## 13. Roadmap & open assumptions (read before continuing)
 
-**Next: Phase 3 — Patient Records (UC-04..08)** per brief §11:
-register + duplicate flagging, search, view/update demographics, add permanent
-medical entries, history timeline. Then Phase 4 appointments (slot availability +
-conflict prevention), Phase 5 reports w/ exports, Phase 6 hardening sweep.
+**Next: Phase 6 — Hardening** (final phase): re-verify every table's RLS blocks the
+wrong role *by testing*, confirm audit coverage end-to-end, responsive/a11y pass,
+loading/empty/error states everywhere (see brief §12 checklist). No new features.
 
 Open assumptions to revisit with the client/document if graded on them:
+- Clinic hours model implemented in Phase 4: Mon–Sat 09:00–17:00 EAT, 30-min
+  slots, no lunch hole, Sundays closed (`lib/constants.ts`).
 - Lockout = 5 consecutive failures → 30-min auto-expiry (no admin manual unlock;
   Phase 2 reactivation clears counters as a side door).
 - Idle timeout fixed at 30 minutes.
@@ -378,6 +382,8 @@ Open assumptions to revisit with the client/document if graded on them:
   intentionally unsupported.
 - `attachment_url` exists but no upload flow (brief MVP note).
 - Search uses btree/prefix semantics; trigram fuzzy search deferred.
+- Reports: PDF satisfied via browser print-to-PDF (print stylesheet); CSV is
+  native export.
 
 ---
 
@@ -407,6 +413,21 @@ Open assumptions to revisit with the client/document if graded on them:
   history uses `author:profiles(full_name)` embed. RBAC verified: HP insert-patient
   403 & receptionist insert-record 403 prove DB floor beneath app gates; sequence
   codes confirmed race-safe (P-#### assigned on REST insert).
+- **2026-08-28 · Phase 4**: appointment booking/reschedule/cancel/calendar shipped;
+  FR-15 double-booking made DB-impossible via two partial unique indexes
+  (#000030, status='scheduled' rows only) with app-side pre-check + 23505 catch
+  as the race path; slot engine constants (09:00–17:00 EAT, 30-min, Sun closed)
+  centralized in lib/constants.ts; two authenticated GET route handlers added
+  (/api/appointments/slots, /api/patients/search) with /api added to proxy
+  protected prefixes; SlotPicker excludeIso pattern keeps an appointment's own
+  slot selectable while rescheduling. Verified: clash→409 at DB, booked slot
+  greyed, Sunday closed, HP write 403 / receptionist 204 policy split.
+- **2026-08-28 · Phase 5**: reporting module (`lib/reports/data.ts` engine shared
+  by screen + CSV route; registrants/appointments/staff-activity over Addis-date
+  ranges; 500-row cap + truncation notice; CSV quoting/escaping + attachment
+  filename; print→PDF via window.print()). Export route enforces admin with
+  JSON 401/403 (route-handler pattern, no redirects). 19-check battery incl.
+  seeded-data rendering, CSV shape, receptionist 403, anonymous 307.
 
 
 

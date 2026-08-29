@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { getCurrentProfile } from "@/lib/auth/session";
 import { can } from "@/lib/permissions/data";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import type { MedicalRecordRow, PatientRow } from "@/types/database";
+import type { PatientRow } from "@/types/database";
 
 export const metadata: Metadata = {
   title: "Patient Record",

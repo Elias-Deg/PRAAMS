@@ -10,10 +10,18 @@ interface Slot {
   available: boolean;
 }
 
+interface SlotState {
+  /** The (staff|date|exclude) request this state answers — stale renders as loading. */
+  key: string;
+  slots: Slot[] | null;
+  closed: boolean;
+  error: string | null;
+}
+
 /**
  * FR-14 — fetches and renders the available slots for one (staff, date) pair.
- * Handles loading, the clinic-closed case, empty results, fetch errors and the
- * parent's reset when the appointment being rescheduled already owns a slot.
+ * State is keyed by the request parameters: renders with a stale key show the
+ * loading state without synchronous setState inside the effect.
  */
 export function SlotPicker({
   staffId,
@@ -29,22 +37,16 @@ export function SlotPicker({
   /** While rescheduling, the appointment's current slot is not "taken". */
   excludeIso?: string | null;
 }): React.ReactElement {
-  const [slots, setSlots] = useState<Slot[] | null>(null);
-  const [closed, setClosed] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const requestKey = `${staffId}|${date}|${excludeIso ?? ""}`;
+  const [state, setState] = useState<SlotState>({ key: "", slots: null, closed: false, error: null });
+
+  const validParams =
+    /^[0-9a-f-]{36}$/i.test(staffId) && /^\d{4}-\d{2}-\d{2}$/.test(date);
+  const stale = state.key !== requestKey;
 
   useEffect(() => {
+    if (!validParams) return;
     let cancelled = false;
-    setSlots(null);
-    setError(null);
-
-    const invalid =
-      !/^[0-9a-f-]{36}$/i.test(staffId) || !/^\d{4}-\d{2}-\d{2}$/.test(date);
-    if (invalid) {
-      setSlots([]);
-      return;
-    }
-
     fetch(`/api/appointments/slots?staff=${staffId}&date=${date}`)
       .then(async (res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -52,45 +54,37 @@ export function SlotPicker({
       })
       .then((body) => {
         if (cancelled) return;
-        setClosed(Boolean(body.closed));
-        // While rescheduling, the appointment's own slot stays selectable
-        // (the server-side clash check excludes it too).
         const normalized = body.slots.map((slot) => {
           if (excludeIso && Date.parse(slot.iso) === Date.parse(excludeIso)) {
             return { ...slot, available: Date.parse(slot.iso) > Date.now() };
           }
           return slot;
         });
-        setSlots(normalized);
+        setState({ key: requestKey, slots: normalized, closed: Boolean(body.closed), error: null });
       })
       .catch((err: unknown) => {
         if (cancelled) return;
-        setSlots([]);
-        setError(err instanceof Error ? err.message : "Could not load slots.");
+        setState({
+          key: requestKey,
+          slots: [],
+          closed: false,
+          error: err instanceof Error ? err.message : "Could not load slots.",
+        });
       });
-
     return () => {
       cancelled = true;
     };
-  }, [staffId, date, excludeIso]);
+  }, [requestKey, staffId, date, excludeIso, validParams]);
 
-  if (closed) {
+  if (!validParams) {
     return (
       <p className="rounded-sm bg-gray-50 px-4 py-3 text-sm text-gray-500">
-        The clinic is closed on {date} (Sundays). Pick another day.
+        Choose a healthcare professional to load available slots.
       </p>
     );
   }
 
-  if (error) {
-    return (
-      <p role="alert" className="rounded-sm border-l-4 border-status-cancelled bg-white px-4 py-3 text-sm text-gray-700">
-        Could not load time slots. Please try again.
-      </p>
-    );
-  }
-
-  if (slots === null) {
+  if (stale) {
     return (
       <p className="text-sm text-gray-500" aria-live="polite">
         Loading available slots…
@@ -98,6 +92,23 @@ export function SlotPicker({
     );
   }
 
+  if (state.error) {
+    return (
+      <p role="alert" className="rounded-sm border-l-4 border-status-cancelled bg-white px-4 py-3 text-sm text-gray-700">
+        Could not load time slots. Please try again.
+      </p>
+    );
+  }
+
+  if (state.closed) {
+    return (
+      <p className="rounded-sm bg-gray-50 px-4 py-3 text-sm text-gray-500">
+        The clinic is closed on {date} (Sundays). Pick another day.
+      </p>
+    );
+  }
+
+  const slots = state.slots ?? [];
   const selectable = slots.filter((slot) => slot.available);
   if (selectable.length === 0) {
     return (

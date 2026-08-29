@@ -34,6 +34,8 @@ Requirements are contracted in [`PRAAMS_Coding_Agent_Brief.md`](./PRAAMS_Coding_
    - `supabase/migrations/20260827000020_role_permissions.sql` — UC-03 capability
      grants (`role_permissions` + defaults) and FK relaxations that let FR-01
      delete accounts without orphaning audit history (actor anonymized).
+   - `supabase/migrations/20260827000030_appointment_slots.sql` — partial unique
+     indexes making double-booking impossible (FR-15).
 
 3. **Seed demo data** (§10 identities):
 
@@ -83,8 +85,12 @@ scripts/seed.ts        Idempotent seed via GoTrue admin API (`npm run db:seed`)
 - [x] **Phase 3 — Patient Records:** register w/ duplicate flagging (UC-04),
       search by name/code/phone (UC-06), view/update demographics (UC-05),
       permanent clinical entries (UC-07) + full history (UC-08)
-- [ ] Phase 4 — Appointments (UC-09–11)
-- [ ] Phase 5 — Reporting (UC-12)
+- [x] **Phase 4 — Appointments:** slot availability + booking w/ DB-level
+      double-booking prevention (UC-09), reschedule/cancel (UC-10), day
+      calendar (UC-11)
+- [x] **Phase 5 — Reporting:** registrations / appointment stats / staff-activity
+      reports over date ranges, CSV export + print-to-PDF (UC-12)
+- [ ] Phase 6 — Hardening
 - [ ] Phase 6 — Hardening: audit coverage, RLS verification, a11y/responsive pass
 
 ## Documented deviations from the brief's schema contract

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 
 import { AppointmentBookingForm } from "@/components/appointment-booking-form";
 import { requirePermission } from "@/lib/auth/session";

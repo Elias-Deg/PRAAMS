@@ -33,7 +33,6 @@ export default async function PatientsPage({
   let rows: PatientRow[] = [];
   let totalCount = 0;
   let searched = false;
-  let searchError: string | null = null;
 
   if (q.length > 0) {
     searched = true;
@@ -61,7 +60,6 @@ export default async function PatientsPage({
   }
 
   const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
-  void searchError;
 
   return (
     <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-10">

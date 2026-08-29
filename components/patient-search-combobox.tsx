@@ -23,26 +23,29 @@ export function PatientSearchCombobox({
   preselectedLabel?: string;
 }): React.ReactElement {
   const [query, setQuery] = useState("");
-  const [hits, setHits] = useState<PatientHit[] | null>(null);
+  const [state, setState] = useState<{ key: string; hits: PatientHit[] | null; error: boolean }>({
+    key: "",
+    hits: null,
+    error: false,
+  });
   const [chosen, setChosen] = useState<PatientHit | null>(
     preselectedId
       ? { id: preselectedId, full_name: preselectedLabel ?? "Selected patient", patient_code: "", phone: null }
       : null,
   );
-  const [error, setError] = useState(false);
   const [open, setOpen] = useState(false);
   const boxRef = useRef<HTMLDivElement>(null);
 
+  const trimmed = query.trim().replace(/[%_,()]/g, "");
+  const searchKey = trimmed.length >= 2 ? trimmed.toLowerCase() : "";
+  const stale = state.key !== searchKey;
+
   useEffect(() => {
-    if (chosen) return;
-    const trimmed = query.trim().replace(/[%_,()]/g, "");
-    if (trimmed.length < 2) {
-      setHits(null);
-      return;
-    }
+    if (chosen || searchKey === "") return;
+    let cancelled = false;
     const controller = new AbortController();
     const timer = setTimeout(() => {
-      fetch(`/api/patients/search?q=${encodeURIComponent(trimmed)}`, {
+      fetch(`/api/patients/search?q=${encodeURIComponent(searchKey)}`, {
         signal: controller.signal,
       })
         .then(async (res) => {
@@ -50,19 +53,21 @@ export function PatientSearchCombobox({
           return (await res.json()) as { results: PatientHit[] };
         })
         .then((body) => {
-          setHits(body.results);
-          setError(body.results.length === 0);
+          if (cancelled) return;
+          setState({ key: searchKey, hits: body.results, error: false });
           setOpen(true);
         })
         .catch((err: unknown) => {
-          if ((err as Error).name !== "AbortError") setError(true);
+          if (cancelled || (err as Error).name === "AbortError") return;
+          setState({ key: searchKey, hits: [], error: true });
         });
     }, 250);
     return () => {
+      cancelled = true;
       clearTimeout(timer);
       controller.abort();
     };
-  }, [query, chosen]);
+  }, [searchKey, chosen]);
 
   // Close the dropdown on outside clicks.
   useEffect(() => {
@@ -91,7 +96,7 @@ export function PatientSearchCombobox({
           onClick={() => {
             setChosen(null);
             setQuery("");
-            setHits(null);
+            setState({ key: "", hits: null, error: false });
           }}
           className="text-xs font-medium text-navy underline underline-offset-2 focus-visible:outline-none"
         >
@@ -111,15 +116,15 @@ export function PatientSearchCombobox({
           setQuery(event.target.value);
           setOpen(true);
         }}
-        onFocus={() => hits && setOpen(true)}
+        onFocus={() => !stale && state.hits && setOpen(true)}
         placeholder="Type a name, code (P-0198) or phone…"
         aria-label="Search for the patient"
         autoComplete="off"
         className="block w-full rounded-sm border border-gray-300 bg-white px-3 py-2.5 text-base text-gray-900 outline-none transition-colors placeholder:text-gray-400 focus:border-navy-light focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-navy-light"
       />
-      {open && hits && hits.length > 0 && (
+      {open && !stale && state.hits && state.hits.length > 0 && (
         <ul className="absolute z-10 mt-1 max-h-64 w-full list-none overflow-auto rounded-sm border border-gray-200 bg-white p-0 shadow-lg">
-          {hits.map((hit) => (
+          {state.hits.map((hit) => (
             <li key={hit.id}>
               <button
                 type="button"
@@ -139,7 +144,7 @@ export function PatientSearchCombobox({
           ))}
         </ul>
       )}
-      {open && error && hits !== null && hits.length === 0 && (
+      {open && !stale && state.hits !== null && state.hits.length === 0 && (
         <p className="mt-1 text-sm text-gray-500">No patients match — check the spelling or register them first.</p>
       )}
       <p className="mt-1.5 text-xs text-gray-500">

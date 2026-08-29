@@ -59,8 +59,8 @@ const MODULES: ModuleCard[] = [
   {
     title: "Reports",
     description: "Registrations, appointment statistics and staff activity exports.",
-    phase: 5,
-    roles: ["administrator"],
+    href: "/admin/reports",
+    ready: true,
   },
 ];
 
