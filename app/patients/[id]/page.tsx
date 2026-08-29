@@ -52,9 +52,13 @@ export default async function PatientDetailPage({
     | null;
   if (!patient) notFound();
 
-  const [canEdit, canAddRecord] = profile
-    ? [await can(profile.role, "patients.edit"), await can(profile.role, "records.add")]
-    : [false, false];
+  const [canEdit, canAddRecord, maySchedule] = profile
+    ? [
+        await can(profile.role, "patients.edit"),
+        await can(profile.role, "records.add"),
+        await can(profile.role, "appointments.schedule"),
+      ]
+    : [false, false, false];
 
   // FR-07 flag surfaced post-registration (?dup=<ids> from createPatient).
   const dupIds =
@@ -105,6 +109,14 @@ export default async function PatientDetailPage({
           </p>
         </div>
         <div className="flex gap-3">
+          {maySchedule && (
+            <Link
+              href={`/appointments/new?patient=${patient.id}`}
+              className="rounded-sm border border-navy bg-white px-4 py-2.5 text-sm font-bold text-navy transition-colors hover:bg-navy-tint focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy"
+            >
+              Book appointment
+            </Link>
+          )}
           {canEdit && (
             <Link
               href={`/patients/${patient.id}/edit`}

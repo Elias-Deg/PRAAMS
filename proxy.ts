@@ -5,7 +5,13 @@ import { INACTIVITY_TIMEOUT_MS, LAST_ACTIVE_COOKIE } from "@/lib/constants";
 
 /** Routes reachable without a session. Everything below a protected prefix requires one. */
 const PUBLIC_PATHS = new Set(["/", "/login"]);
-const PROTECTED_PREFIXES = ["/dashboard", "/patients", "/appointments", "/admin"];
+const PROTECTED_PREFIXES = [
+  "/dashboard",
+  "/patients",
+  "/appointments",
+  "/admin",
+  "/api",
+];
 
 /**
  * Request proxy (Next.js 16's renamed middleware):

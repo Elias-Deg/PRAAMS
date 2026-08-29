@@ -53,7 +53,8 @@ const MODULES: ModuleCard[] = [
   {
     title: "Appointments",
     description: "Book, reschedule and cancel visits; view the day's calendar.",
-    phase: 4,
+    href: "/appointments",
+    ready: true,
   },
   {
     title: "Reports",
