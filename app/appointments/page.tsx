@@ -94,7 +94,7 @@ export default async function AppointmentsPage({
   }).format(new Date(`${date}T12:00:00Z`));
 
   return (
-    <main className="mx-auto w-full max-w-5xl flex-1 px-6 py-10">
+    <main id="main-content" className="mx-auto w-full max-w-5xl flex-1 px-6 py-10">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-navy">Appointments</h1>

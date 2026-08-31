@@ -268,7 +268,7 @@ every toggle audited.
 ## 8. Feature state ledger (update after EVERY task)
 
 **Phases**: 0 Foundation ✅ · 1 Auth ✅ · 2 User Management ✅ · 3 Patient Records ✅
-· 4 Appointments ✅ · 5 Reporting ✅ · 6 Hardening ⬜
+· 4 Appointments ✅ · 5 Reporting ✅ · 6 Hardening ✅ — **MVP complete (brief §11)**
 
 | Route | Use case | State | Key notes |
 |---|---|---|---|
@@ -285,6 +285,20 @@ every toggle audited.
 | `/appointments/new` | UC-09 | ✅ | patient combobox, slot grid via /api/appointments/slots, race→23505 handling |
 | `/appointments/[id]` | UC-10 | ✅ | reschedule w/ excludeIso, confirm-dialog cancel, terminal read-only states |
 | `/admin/reports` (+`/export`) | UC-12 | ✅ | 3 report types over date ranges; CSV export w/ attachment filename; print/save-as-PDF via PrintButton; 500-row cap w/ truncation notice; 403/401 JSON on export route |
+
+---
+
+## 8.1 Brief §12 definition-of-done — final status
+
+| Checklist item | Status | Evidence |
+|---|---|---|
+| All §5 functional requirements incl. alternative flows | ✅ | UC-01..12 rows above; FR-07 dup-flag, FR-15 slot-race, UC-01 lockout all implemented + tested |
+| RLS enabled & policy-tested for all three roles | ✅ | Phase 6 matrix: every table × role × SELECT/INSERT/UPDATE/DELETE incl. filter-vs-403 semantics and silent no-op detection (state-unchanged checks) — all expected outcomes |
+| Every create/update/delete on patients, records, appointments audited | ✅ | `writeAuditLog` in all actions (grep-verified §6.4 catalogue); runtime rows proven via staff-activity report |
+| No password/token/full patient record in client console | ✅ | `console.*` grep across app/components/lib = zero hits |
+| Zod on client & server for every form | ✅ | shared schemas in `lib/validation/*` consumed by forms + actions |
+| Growing lists paginated | ✅ | patients list (20/page), search capped, reports 500-row cap + notice, calendar is day-scoped |
+| Loading/empty/error states everywhere | ✅ | `loading.tsx` skeletons ×6 segments; empty states w/ next actions; root `error.tsx` (digest-only) + branded `not-found.tsx`; inline field/banner errors |
 
 Integration verification highlights already passed: proxy unauth redirects ·
 login renders · all three roles sign in · lockout SQL lifecycle · admin staff
@@ -366,9 +380,10 @@ style for future phase sign-offs.
 
 ## 13. Roadmap & open assumptions (read before continuing)
 
-**Next: Phase 6 — Hardening** (final phase): re-verify every table's RLS blocks the
-wrong role *by testing*, confirm audit coverage end-to-end, responsive/a11y pass,
-loading/empty/error states everywhere (see brief §12 checklist). No new features.
+**All six brief phases are COMPLETE.** Post-MVP ideas parked for the write-up
+(never built, per §2): trigram fuzzy search, admin manual lockout release,
+self-service password change, appointment `no_show` marking UI (status exists and
+is reportable; marking happens via future UC), attachment uploads.
 
 Open assumptions to revisit with the client/document if graded on them:
 - Clinic hours model implemented in Phase 4: Mon–Sat 09:00–17:00 EAT, 30-min
@@ -428,6 +443,16 @@ Open assumptions to revisit with the client/document if graded on them:
   filename; print→PDF via window.print()). Export route enforces admin with
   JSON 401/403 (route-handler pattern, no redirects). 19-check battery incl.
   seeded-data rendering, CSV shape, receptionist 403, anonymous 307.
+- **2026-08-28 · Phase 6 (final)**: hardening pass — full RLS×role×operation
+  matrix executed with real tokens (filter-vs-403 semantics; silent no-op
+  detection via state-unchanged checks) across profiles, patients,
+  medical_records, appointments, audit_logs, login_throttle, role_permissions —
+  all expected outcomes; audit catalogue grep-verified; `console.*` sweep clean;
+  root error.tsx (digest-only) + branded 404 + six loading.tsx skeletons added;
+  skip-link + main landmarks on every screen; fixed a self-inflicted
+  wildcard-path corruption of five bracket-route pages during the sweep
+  (rewritten from session sources, integrity re-verified line-by-line).
+  MVP COMPLETE per brief §11.
 
 
 

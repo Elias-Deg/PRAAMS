@@ -90,7 +90,9 @@ scripts/seed.ts        Idempotent seed via GoTrue admin API (`npm run db:seed`)
       calendar (UC-11)
 - [x] **Phase 5 — Reporting:** registrations / appointment stats / staff-activity
       reports over date ranges, CSV export + print-to-PDF (UC-12)
-- [ ] Phase 6 — Hardening
+- [x] **Phase 6 — Hardening:** RLS matrix tested per table×role×operation,
+      audit coverage confirmed, error/loading/empty states, a11y landmarks —
+      **MVP complete (all UC-01..12, FR-01..19, NFR directives applied)**
 - [ ] Phase 6 — Hardening: audit coverage, RLS verification, a11y/responsive pass
 
 ## Documented deviations from the brief's schema contract

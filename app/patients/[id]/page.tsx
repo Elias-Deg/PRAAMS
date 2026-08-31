@@ -82,11 +82,10 @@ export default async function PatientDetailPage({
     .order("visit_date", { ascending: false });
   const history = (historyRows ?? []) as unknown as HistoryEntry[];
 
-  const notice =
-    typeof sp.notice === "string" ? sp.notice : undefined;
+  const notice = typeof sp.notice === "string" ? sp.notice : undefined;
 
   return (
-    <main className="mx-auto w-full max-w-5xl flex-1 px-6 py-10">
+    <main id="main-content" className="mx-auto w-full max-w-5xl flex-1 px-6 py-10">
       <Link
         href="/patients"
         className="text-sm font-medium text-navy underline-offset-2 hover:underline focus-visible:underline focus-visible:outline-none"

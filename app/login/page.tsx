@@ -25,7 +25,7 @@ export default async function LoginPage({
         <span className="text-lg font-bold tracking-widest text-white">PRAAMS</span>
       </header>
 
-      <main className="flex flex-1 items-center justify-center px-4 py-10">
+      <main id="main-content" className="flex flex-1 items-center justify-center px-4 py-10">
         <div className="w-full max-w-md">
           <section className="rounded-md border border-gray-200 bg-white p-8 shadow-sm">
             <h1 className="text-xl font-bold text-navy">Staff Login</h1>

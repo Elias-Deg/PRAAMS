@@ -31,7 +31,7 @@ export default async function PermissionsPage({
   const matrix = await getGrantedMatrix();
 
   return (
-    <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-10">
+    <main id="main-content" className="mx-auto w-full max-w-6xl flex-1 px-6 py-10">
       <h1 className="text-2xl font-bold text-navy">Role-based access permissions</h1>
       <p className="mt-1 max-w-3xl text-sm text-gray-600">
         Configure which capabilities each role holds (UC-03). Toggles can only{" "}

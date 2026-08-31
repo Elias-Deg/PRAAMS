@@ -55,7 +55,7 @@ export default async function EditStaffPage({
     (member.role !== "administrator" || activeOtherAdmins >= 1);
 
   return (
-    <main className="mx-auto w-full max-w-2xl flex-1 px-6 py-10">
+    <main id="main-content" className="mx-auto w-full max-w-2xl flex-1 px-6 py-10">
       <Link
         href="/admin/staff"
         className="text-sm font-medium text-navy underline-offset-2 hover:underline focus-visible:underline focus-visible:outline-none"
