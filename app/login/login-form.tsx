@@ -8,7 +8,7 @@ import type { LoginActionState } from "@/lib/validation/auth";
 const INITIAL_STATE: LoginActionState = { status: "idle" };
 
 const inputClasses =
-  "mt-1.5 block w-full rounded-sm border border-gray-300 bg-white px-3 py-2.5 text-base text-gray-900 shadow-none outline-none transition-colors placeholder:text-gray-400 focus:border-navy-light focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-navy-light";
+  "mt-1.5 block w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-base text-gray-900 shadow-none outline-none transition-colors placeholder:text-gray-400 focus:border-navy-light focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-navy-light";
 
 function FieldError({ id, message }: { id: string; message?: string }) {
   if (!message) return null;
@@ -29,7 +29,7 @@ export function LoginForm(): React.ReactElement {
       {showAlert && (
         <div
           role="alert"
-          className="rounded-sm border-l-4 border-status-cancelled bg-white px-4 py-3 text-sm text-gray-800 shadow-sm"
+          className="rounded-xl border-l-4 border-status-cancelled bg-white px-4 py-3 text-sm text-gray-800 shadow-soft"
         >
           {state.message}
         </div>
@@ -79,10 +79,11 @@ export function LoginForm(): React.ReactElement {
       <button
         type="submit"
         disabled={pending}
-        className="w-full rounded-sm bg-navy py-2.5 text-center text-base font-bold text-white transition-colors hover:bg-navy-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy disabled:cursor-not-allowed disabled:opacity-60"
+        className="w-full rounded-full bg-navy py-2.5 text-center text-base font-bold text-white transition-colors hover:bg-navy-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy disabled:cursor-not-allowed disabled:opacity-60 active:scale-[0.98]"
       >
         {pending ? "Signing in…" : "Login"}
       </button>
     </form>
   );
 }
+

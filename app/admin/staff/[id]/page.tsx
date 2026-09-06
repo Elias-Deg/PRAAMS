@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { ConfirmSubmitButton } from "@/components/confirm-submit-button";
 import { StaffAccountForm } from "@/components/staff-account-form";
 import { deleteStaff, toggleStaffStatus } from "@/lib/actions/staff";
+import { AppShell } from "@/components/app-shell";
 import { requireAdministrator } from "@/lib/auth/session";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { ProfileRow } from "@/types/database";
@@ -55,7 +56,7 @@ export default async function EditStaffPage({
     (member.role !== "administrator" || activeOtherAdmins >= 1);
 
   return (
-    <main id="main-content" className="mx-auto w-full max-w-2xl flex-1 px-6 py-10">
+    <AppShell active="/admin/staff" profile={actor} width="narrow">
       <Link
         href="/admin/staff"
         className="text-sm font-medium text-navy underline-offset-2 hover:underline focus-visible:underline focus-visible:outline-none"
@@ -71,7 +72,7 @@ export default async function EditStaffPage({
         )}
       </p>
 
-      <section className="mt-6 rounded-md border border-gray-200 bg-white p-6 shadow-sm">
+      <section className="mt-6 rounded-2xl border border-gray-100 bg-white p-6 shadow-soft">
         <StaffAccountForm
           mode="edit"
           profileId={member.id}
@@ -85,12 +86,12 @@ export default async function EditStaffPage({
       </section>
 
       {/* --- DANGER ZONE --- */}
-      <section className="mt-8 rounded-md border border-status-cancelled/40 bg-white p-6 shadow-sm">
+      <section className="mt-8 rounded-2xl border border-status-cancelled/40 bg-white p-6 shadow-soft">
         <h2 className="text-sm font-bold uppercase tracking-wider text-status-cancelled">
           Danger zone
         </h2>
 
-        <div className="mt-4 flex flex-wrap items-center justify-between gap-4 border-b border-gray-200 pb-4">
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-4 border-b border-gray-100 pb-4">
           <div>
             <p className="text-sm font-medium text-gray-900">
               {member.status === "active" ? "Deactivate account" : "Reactivate account"}
@@ -122,7 +123,7 @@ export default async function EditStaffPage({
                   : `Reactivate ${member.full_name}?`
               }
               disabled={!canDeactivate}
-              className={`rounded-sm px-4 py-2 text-sm font-bold text-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy disabled:cursor-not-allowed disabled:opacity-40 ${
+              className={`rounded-xl px-4 py-2 text-sm font-bold text-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy disabled:cursor-not-allowed disabled:opacity-40 ${
                 member.status === "active"
                   ? "bg-status-no-show hover:bg-[#756033]"
                   : "bg-status-completed hover:opacity-90"
@@ -162,13 +163,13 @@ export default async function EditStaffPage({
             <ConfirmSubmitButton
               confirmation={`Permanently DELETE ${member.full_name} (${member.email})? This cannot be undone.`}
               disabled={!canDelete}
-              className="rounded-sm border border-status-cancelled bg-white px-4 py-2 text-sm font-bold text-status-cancelled transition-colors hover:bg-red-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy disabled:cursor-not-allowed disabled:opacity-40"
+              className="rounded-xl border border-status-cancelled bg-white px-4 py-2 text-sm font-bold text-status-cancelled transition-colors hover:bg-red-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy disabled:cursor-not-allowed disabled:opacity-40"
             >
               Delete…
             </ConfirmSubmitButton>
           </form>
         </div>
       </section>
-    </main>
+    </AppShell>
   );
 }

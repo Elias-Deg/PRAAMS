@@ -36,6 +36,9 @@ Requirements are contracted in [`PRAAMS_Coding_Agent_Brief.md`](./PRAAMS_Coding_
      delete accounts without orphaning audit history (actor anonymized).
    - `supabase/migrations/20260827000030_appointment_slots.sql` — partial unique
      indexes making double-booking impossible (FR-15).
+   - `supabase/migrations/20260827000040_profiles_directory_rls.sql` — staff
+     directory read access for all authenticated staff (colleague names in
+     calendars, booking dropdown, attribution).
 
 3. **Seed demo data** (§10 identities):
 

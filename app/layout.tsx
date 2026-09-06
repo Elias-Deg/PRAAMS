@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${inter.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col bg-gray-100 font-sans text-gray-900">
+      <body className="min-h-full flex flex-col bg-surface font-sans text-gray-900">
         <SkipLink />
         <IdleCookieWatcher />
         {children}
@@ -30,3 +30,4 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     </html>
   );
 }
+

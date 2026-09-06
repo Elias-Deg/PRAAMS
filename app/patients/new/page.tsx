@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { PatientForm } from "@/components/patient-form";
+import { AppShell } from "@/components/app-shell";
 import { requirePermission } from "@/lib/auth/session";
 
 export const metadata: Metadata = {
@@ -12,7 +13,7 @@ export default async function NewPatientPage(): Promise<React.ReactElement> {
   const actor = await requirePermission("patients.create");
 
   return (
-    <main id="main-content" className="mx-auto w-full max-w-2xl flex-1 px-6 py-10">
+    <AppShell active="patients" profile={actor} width="narrow">
       <Link
         href="/patients"
         className="text-sm font-medium text-navy underline-offset-2 hover:underline focus-visible:underline focus-visible:outline-none"
@@ -27,9 +28,10 @@ export default async function NewPatientPage(): Promise<React.ReactElement> {
         saving — it never blocks registration (FR-07).
       </p>
 
-      <section className="mt-6 rounded-md border border-gray-200 bg-white p-6 shadow-sm">
+      <section className="mt-6 rounded-2xl border border-gray-100 bg-white p-6 shadow-soft">
         <PatientForm mode="create" />
       </section>
-    </main>
+    </AppShell>
   );
 }
+

@@ -3,6 +3,9 @@ import Link from "next/link";
 
 import { ConfirmSubmitButton } from "@/components/confirm-submit-button";
 import { RoleBadge } from "@/components/role-badge";
+import { AppShell } from "@/components/app-shell";
+import { Avatar } from "@/components/avatar";
+import { Toast } from "@/components/toast";
 import { requireAdministrator } from "@/lib/auth/session";
 import { deleteStaff, toggleStaffStatus } from "@/lib/actions/staff";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -37,12 +40,6 @@ const NOTICES: Record<string, { text: string; tone: "ok" | "warn" | "err" }> = {
   },
 };
 
-const TONE_STYLES = {
-  ok: "border-status-completed",
-  warn: "border-status-no-show",
-  err: "border-status-cancelled",
-} as const;
-
 export default async function StaffListPage({
   searchParams,
 }: PageProps<"/admin/staff">): Promise<React.ReactElement> {
@@ -55,7 +52,7 @@ export default async function StaffListPage({
   const staff = (data ?? []) as unknown as ProfileRow[];
 
   return (
-    <main id="main-content" className="mx-auto w-full max-w-6xl flex-1 px-6 py-10">
+    <AppShell active="/admin/staff" profile={actor} width="xwide">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-navy">Manage staff accounts</h1>
@@ -66,30 +63,28 @@ export default async function StaffListPage({
         </div>
         <Link
           href="/admin/staff/new"
-          className="rounded-sm bg-navy px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-navy-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy"
+          className="rounded-full bg-navy px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-navy-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy"
         >
           + New account
         </Link>
       </div>
 
       {notice && (
-        <p
-          role={notice.tone === "err" ? "alert" : "status"}
-          className={`mt-6 rounded-md border-l-4 ${TONE_STYLES[notice.tone]} bg-white px-4 py-3 text-sm text-gray-800 shadow-sm`}
-        >
-          {notice.text}
-        </p>
+        <Toast
+          message={notice.text}
+          tone={notice.tone === "ok" ? "success" : "error"}
+        />
       )}
 
-      <div className="mt-8 overflow-x-auto rounded-md border border-gray-200 bg-white shadow-sm">
+      <div className="mt-8 overflow-x-auto rounded-2xl border border-gray-100 bg-white shadow-soft">
         <table className="w-full min-w-[720px] text-left text-sm">
           <thead className="bg-navy-tint text-xs uppercase tracking-wider text-navy">
             <tr>
-              <th scope="col" className="px-5 py-3">Name</th>
-              <th scope="col" className="px-5 py-3">Role</th>
-              <th scope="col" className="px-5 py-3">Email</th>
-              <th scope="col" className="px-5 py-3">Phone</th>
-              <th scope="col" className="px-5 py-3">Status</th>
+              <th scope="col" className="px-5 py-3 first:rounded-tl-2xl last:rounded-tr-2xl">Name</th>
+              <th scope="col" className="px-5 py-3 first:rounded-tl-2xl last:rounded-tr-2xl">Role</th>
+              <th scope="col" className="px-5 py-3 first:rounded-tl-2xl last:rounded-tr-2xl">Email</th>
+              <th scope="col" className="px-5 py-3 first:rounded-tl-2xl last:rounded-tr-2xl">Phone</th>
+              <th scope="col" className="px-5 py-3 first:rounded-tl-2xl last:rounded-tr-2xl">Status</th>
               <th scope="col" className="px-5 py-3 text-right">Actions</th>
             </tr>
           </thead>
@@ -99,9 +94,14 @@ export default async function StaffListPage({
               const inactive = member.status !== "active";
               return (
                 <tr key={member.id} className={inactive ? "opacity-60" : undefined}>
-                  <td className="px-5 py-3.5 font-medium text-gray-900">
-                    {member.full_name}
-                    {isSelf && <span className="ml-2 text-xs text-gray-400">(you)</span>}
+                  <td className="px-5 py-3.5">
+                    <div className="flex items-center gap-3">
+                      <Avatar name={member.full_name} size="sm" />
+                      <span className="font-medium text-gray-900">
+                        {member.full_name}
+                        {isSelf && <span className="ml-2 text-xs text-gray-400">(you)</span>}
+                      </span>
+                    </div>
                   </td>
                   <td className="px-5 py-3.5"><RoleBadge role={member.role} /></td>
                   <td className="px-5 py-3.5 text-gray-600">{member.email}</td>
@@ -133,7 +133,7 @@ export default async function StaffListPage({
                           confirmation={`Deactivate ${member.full_name}? They will be signed out and unable to log in until reactivated.`}
                           disabled={isSelf}
                           title={isSelf ? "You cannot deactivate your own account" : undefined}
-                          className="rounded-sm border border-gray-300 bg-white px-2 py-1 text-xs font-medium text-status-cancelled transition-colors hover:border-status-cancelled hover:bg-red-50 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-navy disabled:cursor-not-allowed disabled:opacity-40"
+                          className="rounded-full border border-gray-300 bg-white px-2 py-1 text-xs font-medium text-status-cancelled transition-colors hover:border-status-cancelled hover:bg-red-50 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-navy disabled:cursor-not-allowed disabled:opacity-40"
                         >
                           Deactivate
                         </ConfirmSubmitButton>
@@ -145,7 +145,7 @@ export default async function StaffListPage({
                         <input type="hidden" name="targetStatus" value="active" />
                         <ConfirmSubmitButton
                           confirmation={`Reactivate ${member.full_name}? Their failed-login counter will be reset.`}
-                          className="rounded-sm border border-gray-300 bg-white px-2 py-1 text-xs font-medium text-status-completed transition-colors hover:border-status-completed hover:bg-green-50 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-navy"
+                          className="rounded-full border border-gray-300 bg-white px-2 py-1 text-xs font-medium text-status-completed transition-colors hover:border-status-completed hover:bg-green-50 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-navy"
                         >
                           Reactivate
                         </ConfirmSubmitButton>
@@ -158,7 +158,7 @@ export default async function StaffListPage({
                         confirmation={`Permanently DELETE ${member.full_name} (${member.email})? This cannot be undone.`}
                         disabled={isSelf}
                         title={isSelf ? "You cannot delete your own account" : undefined}
-                        className="ml-2 rounded-sm border border-transparent bg-none px-2 py-1 text-xs font-medium text-gray-400 transition-colors hover:text-status-cancelled hover:underline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-navy disabled:cursor-not-allowed disabled:opacity-40"
+                        className="ml-2 rounded-full border border-transparent bg-none px-2 py-1 text-xs font-medium text-gray-400 transition-colors hover:text-status-cancelled hover:underline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-navy disabled:cursor-not-allowed disabled:opacity-40"
                       >
                         Delete
                       </ConfirmSubmitButton>
@@ -170,6 +170,8 @@ export default async function StaffListPage({
           </tbody>
         </table>
       </div>
-    </main>
+    </AppShell>
   );
 }
+
+

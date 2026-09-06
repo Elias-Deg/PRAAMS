@@ -152,12 +152,17 @@ app/
   admin/permissions/page.tsx  UC-03 capability matrix editor
   patients/…                  Phase 3 route tree (search/new/[id]/records)
 components/
-  staff-account-form.tsx      create|edit account form (useActionState pattern)
-  patient-form.tsx            Phase 3 demographic form (create|edit)
-  permission-toggle.tsx       Granted/Denied pill form-button
+  app-shell.tsx               persistent sidebar shell (nav, user chip, widths)
+  icons.tsx · avatar.tsx      inline SVG set · colored-initial person circles
+  toast.tsx · skeleton.tsx    auto-dismiss notices · loading skeletons
+  skip-link.tsx · role-badge.tsx · print-button.tsx
   confirm-submit-button.tsx   native-confirm destructive submit (NFR-05)
-  role-badge.tsx              desaturated role pill
-  idle-cookie-watcher.tsx     global activity stamper (client)
+  idle-cookie-watcher.tsx     global activity stamper (FR-05 idle timeout)
+  permission-toggle.tsx       Granted/Denied pill (UC-03)
+  patient-search-combobox.tsx debounced register lookup (UC-09)
+  slot-picker.tsx             FR-14 availability grid client
+  staff-account-form.tsx · patient-form.tsx · record-form.tsx
+  appointment-booking-form.tsx · appointment-reschedule-form.tsx
 lib/
   constants.ts                LOCKOUT_*/INACTIVITY_* single source (mirrored in SQL!)
   audit.ts                    writeAuditLog()
@@ -345,8 +350,8 @@ insert-record 403, receptionist insert-patient 201 w/ sequence code, HP patch
   (`tsx --env-file=.env.local scripts/seed.ts`, idempotent).
 - Migrations are applied by pasting each file into Supabase Dashboard → SQL Editor,
   oldest-first. Applied log: #000000 init · #000010 login security ·
-  #000020 role permissions/FK relaxations · #000030 appointment slot uniqueness
-  (all applied). New migrations follow name pattern `YYYYMMDDHHMMSS_topic.sql` and
+  #000020 role permissions/FK relaxations · #000030 appointment slot uniqueness ·
+  #000040 profiles directory RLS (visual pass §3 decision) — all applied. New migrations follow name pattern `YYYYMMDDHHMMSS_topic.sql` and
   must be added to README + applied-log here once pasted.
 - Node ≥ 20 required (tsx --env-file). Windows dev machine.
 - Build/lint gates: `npm run lint`, `npm run build` must be green before done.
@@ -453,6 +458,68 @@ Open assumptions to revisit with the client/document if graded on them:
   wildcard-path corruption of five bracket-route pages during the sweep
   (rewritten from session sources, integrity re-verified line-by-line).
   MVP COMPLETE per brief §11.
+- **2026-08-29 · Visual pass §1 (shell)**: persistent navy sidebar across all 14
+  authenticated pages via new `AppShell` (role-filtered nav w/ inline SVG icons,
+  active-highlight via `aria-current`, user chip w/ Avatar + sign-out, mobile
+  top-bar icon fallback, `width` prop per page, `#main-content` landmark);
+  `components/avatar.tsx` colored-initial circles; loading.tsx ×6 made
+  shell-consistent; `devIndicators: false` (the red "N" bubble was the Next.js
+  dev-tools indicator); fade-in transition on main. Zero functional changes —
+  URLs, actions, policies untouched. Verified: lint 0 · build 0 · 7-check
+  shell smoke (role filtering, active state, detail pages wrapped).
+- **2026-08-29 · Visual pass §2 (dashboard workspace)**: dashboard rebuilt as a
+  live workspace — role-specific stat cards from real counts (admin: patients /
+  appointments-today / active staff / audit-7d; HP: my-today, my-week, patients
+  seen this week; receptionist: today, booked-today, new patients 7d, scheduled
+  7d), dependency-free `BarChart` (div bars, 14-day appointments, admin only),
+  `ActivityFeed` timeline (last 8 audit rows, humanized action labels, patient
+  names resolved from target ids, actor + relative time, admin only), module
+  cards demoted to a compact Quick-actions row. New `lib/time.ts` Addis-date
+  helpers. Verified: lint 0 · build 0 · 9-check smoke across all three roles.
+- **2026-08-29 · Visual pass §3 (appointments week grid)**: primary **weekly
+  schedule grid** added (Mon–Sun columns × 30-min slot rows, Today column
+  highlight, Sunday closed column, prev/next-week navigation) with status-colored
+  blocks — scheduled blue / completed green / no-show amber / cancelled muted
+  gray + strikethrough — native-tooltip details (patient, time, HP, reason,
+  status), click-through to the manage page, status legend; day list retained as
+  an alternate view via a Week|Day segmented toggle (`?view=`). Fixed a latent
+  UTC-time bug in the day list (times were sliced from UTC; now Addis-labeled).
+  **FLAGGED (needs owner decision — RLS policy change is guardrail-restricted):**
+  `profiles` RLS lets staff read only their own row, so colleague names (HP in
+  tooltips, booking dropdown, detail attribution) resolve to "—" for
+  non-administrators. Proposed one-policy amendment (paste on approval):
+  `create policy "profiles_staff_read" on profiles for select using (auth.role() = 'authenticated');`
+  (superset of the existing self/admin select policy; staff-directory data only).
+  Verified: lint 0 · build 0 · 10-check smoke (grid structure, block colors,
+  tooltips under admin session, toggles, day-list Addis fix, probes cleaned).
+- **2026-08-29 · RLS amendment applied (#000040)**: owner approved + pasted
+  `profiles_staff_read` — staff directory (display fields) now readable by all
+  authenticated staff. Resolves the flagged defect: colleague names now render
+  for non-admins in grid tooltips, booking dropdown (FR-13), detail attribution.
+- **2026-08-29 · Visual pass §4 (patient record)**: profile-header summary card
+  (Avatar lg, name + code pill, gender/age/DOB/phone line, capability-gated
+  actions, contact + registration grid); history restyled as a vertical timeline
+  (rail + navy dots, newest emphasized); duplicate demographics section removed.
+- **2026-08-29 · Visual pass §5 (micro-interactions)**: `Toast` component
+  (auto-dismiss + manual ×, success/error tones) wired to every mutating-action
+  redirect (staff list, appointments, permissions, patient record); press states
+  (`active:scale-[0.98]`/`0.95`) across all buttons, toggles, slots, blocks,
+  quick-action cards and sidebar items; Avatars in staff list rows and booking
+  combobox hits; `animate-fade-in` page transitions; `animate-toast-in`
+  keyframes; reduced-motion already neutralizes all of it. Verified: lint 0 ·
+  build 0 · 7-check §5 smoke (toasts ×3, press ×2, avatars, shell).
+- **2026-08-29 · Visual pass §6 (soft & bubbly design language)**: global
+  curvature/shadow sweep across every screen — `--color-surface` (#f3f5fb)
+  page background, `--shadow-soft`/`--shadow-pop` navy-tinted diffuse shadows;
+  radii ladder (cards `rounded-2xl`, shells `rounded-3xl`, controls
+  `rounded-xl`, **all primary buttons + slot pickers + row actions + segmented
+  toggle → pills**, chart bars `rounded-t-full`); borders lightened
+  (gray-200→gray-100); stat cards gradient + hover-lift; avatars ringed;
+  sidebar now a **floating rounded-3xl panel** with a bubbled user chip;
+  table/calendar headers get corner rounding. Pure presentation — no logic,
+  routes, schema or policy changes. Verified: lint 0 · build 0 · 5-check
+  render smoke (login card + pill submit + surface bg, floating sidebar,
+  stat gradient/lift, pill bars, avatar rings).
 
 
 

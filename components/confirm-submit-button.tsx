@@ -27,7 +27,7 @@ export function ConfirmSubmitButton({
       type="submit"
       disabled={disabled}
       title={title}
-      className={className}
+      className={`active:scale-[0.98] ${className ?? ""}`}
       onClick={(event) => {
         if (!window.confirm(confirmation)) {
           event.preventDefault();

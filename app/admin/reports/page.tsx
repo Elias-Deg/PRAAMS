@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { PrintButton } from "@/components/print-button";
+import { AppShell } from "@/components/app-shell";
 import { requireAdministrator } from "@/lib/auth/session";
 import { todayInAddis } from "@/lib/constants";
 import {
@@ -17,14 +18,14 @@ export const metadata: Metadata = {
 };
 
 const inputClasses =
-  "mt-1.5 block w-full rounded-sm border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 outline-none transition-colors focus:border-navy-light focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-navy-light";
+  "mt-1.5 block w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 outline-none transition-colors focus:border-navy-light focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-navy-light";
 const labelClasses = "block text-sm font-medium text-gray-700";
 
 /** UC-12 · FR-18/19 — generate, view, print or export administrative reports. */
 export default async function ReportsPage({
   searchParams,
 }: PageProps<"/admin/reports">): Promise<React.ReactElement> {
-  await requireAdministrator();
+  const actor = await requireAdministrator();
   const sp = await searchParams;
 
   const rawType = typeof sp.type === "string" ? sp.type : "registrations";
@@ -42,7 +43,7 @@ export default async function ReportsPage({
   const exportHref = `/admin/reports/export?type=${type}&from=${from}&to=${to}`;
 
   return (
-    <main id="main-content" className="mx-auto w-full max-w-6xl flex-1 px-6 py-10">
+    <AppShell active="/admin/reports" profile={actor} width="xwide">
       <Link
         href="/dashboard"
         className="text-sm font-medium text-navy underline-offset-2 hover:underline focus-visible:underline focus-visible:outline-none print:hidden"
@@ -60,7 +61,7 @@ export default async function ReportsPage({
       <form
         action="/admin/reports"
         method="get"
-        className="mt-6 grid items-end gap-4 rounded-md border border-gray-200 bg-white p-5 shadow-sm sm:grid-cols-[1.4fr_1fr_1fr_auto] print:hidden"
+        className="mt-6 grid items-end gap-4 rounded-2xl border border-gray-100 bg-white p-5 shadow-soft sm:grid-cols-[1.4fr_1fr_1fr_auto] print:hidden"
       >
         <div>
           <label htmlFor="type" className={labelClasses}>
@@ -88,14 +89,14 @@ export default async function ReportsPage({
         </div>
         <button
           type="submit"
-          className="h-[42px] rounded-sm bg-navy px-5 text-sm font-bold text-white transition-colors hover:bg-navy-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy"
+          className="h-[42px] rounded-full bg-navy px-5 text-sm font-bold text-white transition-colors hover:bg-navy-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy"
         >
           Generate
         </button>
       </form>
 
       {!rangeOk && (
-        <p role="alert" className="mt-6 rounded-md border-l-4 border-status-cancelled bg-white px-4 py-3 text-sm text-gray-800 shadow-sm">
+        <p role="alert" className="mt-6 rounded-2xl border-l-4 border-status-cancelled bg-white px-4 py-3 text-sm text-gray-800 shadow-soft">
           The date range is invalid — “From” must be on or before “To”.
         </p>
       )}
@@ -113,7 +114,7 @@ export default async function ReportsPage({
               <PrintButton />
               <a
                 href={exportHref}
-                className="rounded-sm bg-navy px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-navy-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy"
+                className="rounded-full bg-navy px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-navy-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy"
               >
                 Export CSV
               </a>
@@ -134,7 +135,7 @@ export default async function ReportsPage({
           </div>
 
           {report.truncated && (
-            <p className="mt-3 rounded-sm border-l-4 border-status-no-show bg-white px-4 py-2.5 text-xs text-gray-600 shadow-sm">
+            <p className="mt-3 rounded-xl border-l-4 border-status-no-show bg-white px-4 py-2.5 text-xs text-gray-600 shadow-soft">
               Showing the latest 500 rows — the full count is in the summary. Narrow the
               date range to see everything on screen.
             </p>
@@ -142,17 +143,17 @@ export default async function ReportsPage({
 
           {/* --- REPORT TABLE --- */}
           {report.rows.length === 0 ? (
-            <div className="mt-4 rounded-md border border-gray-200 bg-white p-10 text-center shadow-sm">
+            <div className="mt-4 rounded-2xl border border-gray-100 bg-white p-10 text-center shadow-soft">
               <p className="text-sm font-semibold text-gray-800">No data for this range</p>
               <p className="mt-1 text-sm text-gray-500">Try a wider date range.</p>
             </div>
           ) : (
-            <div className="mt-4 overflow-x-auto rounded-md border border-gray-200 bg-white shadow-sm">
+            <div className="mt-4 overflow-x-auto rounded-2xl border border-gray-100 bg-white shadow-soft">
               <table className="w-full min-w-[720px] text-left text-sm">
                 <thead className="bg-navy-tint text-xs uppercase tracking-wider text-navy">
                   <tr>
                     {report.columns.map((column) => (
-                      <th key={column} scope="col" className="px-4 py-3">
+                      <th key={column} scope="col" className="px-4 py-3 first:rounded-tl-2xl last:rounded-tr-2xl">
                         {column}
                       </th>
                     ))}
@@ -174,6 +175,8 @@ export default async function ReportsPage({
           )}
         </section>
       )}
-    </main>
+    </AppShell>
   );
 }
+
+

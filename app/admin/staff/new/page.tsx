@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { StaffAccountForm } from "@/components/staff-account-form";
+import { AppShell } from "@/components/app-shell";
 import { requireAdministrator } from "@/lib/auth/session";
 
 export const metadata: Metadata = {
@@ -9,10 +10,10 @@ export const metadata: Metadata = {
 };
 
 export default async function NewStaffPage(): Promise<React.ReactElement> {
-  await requireAdministrator();
+  const actor = await requireAdministrator();
 
   return (
-    <main id="main-content" className="mx-auto w-full max-w-2xl flex-1 px-6 py-10">
+    <AppShell active="/admin/staff" profile={actor} width="narrow">
       <Link
         href="/admin/staff"
         className="text-sm font-medium text-navy underline-offset-2 hover:underline focus-visible:underline focus-visible:outline-none"
@@ -26,9 +27,10 @@ export default async function NewStaffPage(): Promise<React.ReactElement> {
         usable immediately after creation.
       </p>
 
-      <section className="mt-6 rounded-md border border-gray-200 bg-white p-6 shadow-sm">
+      <section className="mt-6 rounded-2xl border border-gray-100 bg-white p-6 shadow-soft">
         <StaffAccountForm mode="create" />
       </section>
-    </main>
+    </AppShell>
   );
 }
+

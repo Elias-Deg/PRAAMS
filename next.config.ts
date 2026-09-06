@@ -6,6 +6,9 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: __dirname,
   },
+  // The red "N" bubble in the corner is the Next.js dev-tools indicator —
+  // disabled deliberately now that the app has its own chrome.
+  devIndicators: false,
 };
 
 export default nextConfig;

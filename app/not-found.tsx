@@ -11,10 +11,12 @@ export default function NotFound(): React.ReactElement {
       </p>
       <Link
         href="/dashboard"
-        className="mt-6 rounded-sm bg-navy px-5 py-2.5 text-sm font-bold text-white transition-colors hover:bg-navy-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy"
+        className="mt-6 rounded-full bg-navy px-5 py-2.5 text-sm font-bold text-white transition-colors hover:bg-navy-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy"
       >
         Back to dashboard
       </Link>
     </main>
   );
 }
+
+

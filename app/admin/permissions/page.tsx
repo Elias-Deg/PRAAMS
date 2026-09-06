@@ -3,6 +3,8 @@ import Link from "next/link";
 
 import { RoleBadge } from "@/components/role-badge";
 import { PermissionToggle } from "@/components/permission-toggle";
+import { AppShell } from "@/components/app-shell";
+import { Toast } from "@/components/toast";
 import { requireAdministrator } from "@/lib/auth/session";
 import {
   ALL_ROLES,
@@ -26,12 +28,13 @@ export default async function PermissionsPage({
 }: PageProps<"/admin/permissions">): Promise<React.ReactElement> {
   const actor = await requireAdministrator();
   const params = await searchParams;
+  const saved = params.notice === "saved";
   const failed = params.notice === "error";
 
   const matrix = await getGrantedMatrix();
 
   return (
-    <main id="main-content" className="mx-auto w-full max-w-6xl flex-1 px-6 py-10">
+    <AppShell active="/admin/permissions" profile={actor} width="wide">
       <h1 className="text-2xl font-bold text-navy">Role-based access permissions</h1>
       <p className="mt-1 max-w-3xl text-sm text-gray-600">
         Configure which capabilities each role holds (UC-03). Toggles can only{" "}
@@ -39,19 +42,16 @@ export default async function PermissionsPage({
         permits — they can never widen access beyond it (NFR-09 least privilege).
       </p>
 
-      {failed && (
-        <p role="alert" className="mt-5 rounded-md border-l-4 border-status-cancelled bg-white px-4 py-3 text-sm text-gray-800 shadow-sm">
-          The permission change could not be saved. Please try again.
-        </p>
-      )}
+      {saved && <Toast message="Permission updated." />}
+      {failed && <Toast message="The permission change could not be saved. Please try again." tone="error" />}
 
       <div className="mt-8 grid gap-5 lg:grid-cols-3">
         {ALL_ROLES.map((role) => (
           <section
             key={role}
-            className="rounded-md border border-gray-200 bg-white p-5 shadow-sm"
+            className="rounded-2xl border border-gray-100 bg-white p-5 shadow-soft"
           >
-            <header className="border-b border-gray-200 pb-3">
+            <header className="border-b border-gray-100 pb-3">
               <RoleBadge role={role} />
               <p className="mt-2 text-xs text-gray-500">{ROLE_SUBTITLES[role]}</p>
             </header>
@@ -79,7 +79,7 @@ export default async function PermissionsPage({
                   className={`inline-block min-w-[92px] rounded-full px-3 py-1 text-center text-xs font-semibold ${
                     role === "administrator"
                       ? "bg-navy-tint text-navy"
-                      : "bg-gray-100 text-gray-400"
+                      : "bg-surface text-gray-400"
                   }`}
                 >
                   {role === "administrator" ? "Always on" : "—"}
@@ -90,7 +90,7 @@ export default async function PermissionsPage({
         ))}
       </div>
 
-      <p className="mt-8 rounded-md border-l-4 border-navy-light bg-navy-tint px-4 py-3 text-sm text-navy-dark">
+      <p className="mt-8 rounded-2xl border-l-4 border-navy-light bg-navy-tint px-4 py-3 text-sm text-navy-dark">
         Signed in as {actor.full_name}. Every toggle here is written to the audit trail,
         and grants take effect immediately across all admin screens and server actions.
         Need staff changes instead? Head to{" "}
@@ -99,6 +99,7 @@ export default async function PermissionsPage({
         </Link>
         .
       </p>
-    </main>
+    </AppShell>
   );
 }
+

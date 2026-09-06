@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { RecordForm } from "@/components/record-form";
+import { AppShell } from "@/components/app-shell";
 import { requirePermission } from "@/lib/auth/session";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { PatientRow } from "@/types/database";
@@ -16,7 +17,7 @@ export default async function NewRecordPage({
 }: {
   params: Promise<{ id: string }>;
 }): Promise<React.ReactElement> {
-  await requirePermission("records.add");
+  const actor = await requirePermission("records.add");
   const { id } = await params;
 
   const supabase = await createSupabaseServerClient();
@@ -25,7 +26,7 @@ export default async function NewRecordPage({
   if (!patient) notFound();
 
   return (
-    <main id="main-content" className="mx-auto w-full max-w-2xl flex-1 px-6 py-10">
+    <AppShell active="patients" profile={actor} width="narrow">
       <Link
         href={`/patients/${patient.id}`}
         className="text-sm font-medium text-navy underline-offset-2 hover:underline focus-visible:underline focus-visible:outline-none"
@@ -42,9 +43,9 @@ export default async function NewRecordPage({
         </span>
       </p>
 
-      <section className="mt-6 rounded-md border border-gray-200 bg-white p-6 shadow-sm">
+      <section className="mt-6 rounded-2xl border border-gray-100 bg-white p-6 shadow-soft">
         <RecordForm patientId={patient.id} />
       </section>
-    </main>
+    </AppShell>
   );
 }

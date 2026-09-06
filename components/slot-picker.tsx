@@ -78,7 +78,7 @@ export function SlotPicker({
 
   if (!validParams) {
     return (
-      <p className="rounded-sm bg-gray-50 px-4 py-3 text-sm text-gray-500">
+      <p className="rounded-xl bg-gray-50 px-4 py-3 text-sm text-gray-500">
         Choose a healthcare professional to load available slots.
       </p>
     );
@@ -94,7 +94,7 @@ export function SlotPicker({
 
   if (state.error) {
     return (
-      <p role="alert" className="rounded-sm border-l-4 border-status-cancelled bg-white px-4 py-3 text-sm text-gray-700">
+      <p role="alert" className="rounded-xl border-l-4 border-status-cancelled bg-white px-4 py-3 text-sm text-gray-700">
         Could not load time slots. Please try again.
       </p>
     );
@@ -102,7 +102,7 @@ export function SlotPicker({
 
   if (state.closed) {
     return (
-      <p className="rounded-sm bg-gray-50 px-4 py-3 text-sm text-gray-500">
+      <p className="rounded-xl bg-gray-50 px-4 py-3 text-sm text-gray-500">
         The clinic is closed on {date} (Sundays). Pick another day.
       </p>
     );
@@ -112,7 +112,7 @@ export function SlotPicker({
   const selectable = slots.filter((slot) => slot.available);
   if (selectable.length === 0) {
     return (
-      <p className="rounded-sm bg-gray-50 px-4 py-3 text-sm text-gray-500">
+      <p className="rounded-xl bg-gray-50 px-4 py-3 text-sm text-gray-500">
         No free slots on {date}
         {date === todayInAddis() ? " (remaining today)" : ""}. Try another day.
       </p>
@@ -135,12 +135,12 @@ export function SlotPicker({
               disabled={!enabled}
               aria-pressed={isSelected}
               onClick={() => enabled && onSelect(slot.iso)}
-              className={`rounded-sm border px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy ${
+              className={`rounded-full border px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy active:scale-[0.95] ${
                 isSelected
                   ? "border-navy bg-navy text-white"
                   : enabled
                     ? "border-navy-light bg-white text-navy hover:bg-navy-tint"
-                    : "cursor-not-allowed border-gray-200 bg-gray-50 text-gray-400"
+                    : "cursor-not-allowed border-gray-100 bg-gray-50 text-gray-400"
               }`}
             >
               {slot.label}
@@ -155,3 +155,4 @@ export function SlotPicker({
     </fieldset>
   );
 }
+

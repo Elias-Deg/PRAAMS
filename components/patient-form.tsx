@@ -8,7 +8,7 @@ import type { PatientActionState } from "@/lib/validation/patient";
 const INITIAL_STATE: PatientActionState = { status: "idle" };
 
 const inputClasses =
-  "mt-1.5 block w-full rounded-sm border border-gray-300 bg-white px-3 py-2.5 text-base text-gray-900 outline-none transition-colors placeholder:text-gray-400 focus:border-navy-light focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-navy-light";
+  "mt-1.5 block w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-base text-gray-900 outline-none transition-colors placeholder:text-gray-400 focus:border-navy-light focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-navy-light";
 const labelClasses = "block text-sm font-medium text-gray-700";
 
 function FieldError({ message }: { message?: string }): React.ReactElement | null {
@@ -57,7 +57,7 @@ export function PatientForm({
       {state.message && (
         <div
           role="alert"
-          className="rounded-sm border-l-4 border-status-cancelled bg-white px-4 py-3 text-sm text-gray-800 shadow-sm"
+          className="rounded-xl border-l-4 border-status-cancelled bg-white px-4 py-3 text-sm text-gray-800 shadow-soft"
         >
           {state.message}
         </div>
@@ -65,7 +65,7 @@ export function PatientForm({
       {state.status === "saved" && (
         <p
           role="status"
-          className="rounded-sm border-l-4 border-status-completed bg-white px-4 py-3 text-sm text-gray-800 shadow-sm"
+          className="rounded-xl border-l-4 border-status-completed bg-white px-4 py-3 text-sm text-gray-800 shadow-soft"
         >
           Saved.
         </p>
@@ -181,7 +181,7 @@ export function PatientForm({
       <button
         type="submit"
         disabled={pending}
-        className="w-full rounded-sm bg-navy py-2.5 text-center text-base font-bold text-white transition-colors hover:bg-navy-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto sm:min-w-[160px]"
+        className="w-full rounded-full bg-navy py-2.5 text-center text-base font-bold text-white transition-colors hover:bg-navy-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy disabled:cursor-not-allowed disabled:opacity-60 active:scale-[0.98] sm:w-auto sm:min-w-[160px]"
       >
         {pending
           ? mode === "create"
@@ -194,3 +194,4 @@ export function PatientForm({
     </form>
   );
 }
+

@@ -32,7 +32,7 @@ export function PermissionToggle({
       <button
         type="submit"
         aria-pressed={granted}
-        className={`inline-block min-w-[92px] rounded-full px-3 py-1 text-xs font-semibold text-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy disabled:cursor-wait disabled:opacity-70 ${
+        className={`inline-block min-w-[92px] rounded-full px-3 py-1 text-xs font-semibold text-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy disabled:cursor-wait disabled:opacity-70 active:scale-[0.95] ${
           granted ? "bg-status-completed hover:bg-navy-dark" : "bg-gray-400 hover:bg-gray-500"
         }`}
       >

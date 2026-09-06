@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
+import { AppShell } from "@/components/app-shell";
 import { getCurrentProfile } from "@/lib/auth/session";
 import { can } from "@/lib/permissions/data";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -23,6 +25,7 @@ export default async function PatientsPage({
   searchParams,
 }: PageProps<"/patients">): Promise<React.ReactElement> {
   const profile = await getCurrentProfile();
+  if (!profile) redirect("/login");
   const params = await searchParams;
   const q = typeof params.q === "string" ? params.q.trim() : "";
   const page = Math.max(1, Number(params.page ?? 1) || 1);
@@ -62,7 +65,7 @@ export default async function PatientsPage({
   const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
 
   return (
-    <main id="main-content" className="mx-auto w-full max-w-6xl flex-1 px-6 py-10">
+    <AppShell active="patients" profile={profile} width="xwide">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-navy">Patients</h1>
@@ -73,7 +76,7 @@ export default async function PatientsPage({
         {mayRegister && (
           <Link
             href="/patients/new"
-            className="rounded-sm bg-navy px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-navy-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy"
+            className="rounded-full bg-navy px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-navy-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy"
           >
             + Register patient
           </Link>
@@ -88,18 +91,18 @@ export default async function PatientsPage({
           defaultValue={q}
           placeholder="Search by name, patient code (e.g. P-0198) or phone…"
           aria-label="Search patients by name, code or phone"
-          className="block w-full rounded-sm border border-gray-300 bg-white px-4 py-2.5 text-base text-gray-900 outline-none transition-colors placeholder:text-gray-400 focus:border-navy-light focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-navy-light"
+          className="block w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-base text-gray-900 outline-none transition-colors placeholder:text-gray-400 focus:border-navy-light focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-navy-light"
         />
         <button
           type="submit"
-          className="shrink-0 rounded-sm border border-navy bg-white px-5 py-2.5 text-sm font-bold text-navy transition-colors hover:bg-navy-tint focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy"
+          className="shrink-0 rounded-xl border border-navy bg-white px-5 py-2.5 text-sm font-bold text-navy transition-colors hover:bg-navy-tint focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy"
         >
           Search
         </button>
         {searched && (
           <Link
             href="/patients"
-            className="flex items-center rounded-sm px-3 py-2.5 text-sm font-medium text-gray-500 underline-offset-2 hover:text-gray-800 hover:underline focus-visible:underline focus-visible:outline-none"
+            className="flex items-center rounded-xl px-3 py-2.5 text-sm font-medium text-gray-500 underline-offset-2 hover:text-gray-800 hover:underline focus-visible:underline focus-visible:outline-none"
           >
             Clear
           </Link>
@@ -108,7 +111,7 @@ export default async function PatientsPage({
 
       {/* --- RESULTS / EMPTY STATES --- */}
       {rows.length === 0 ? (
-        <div className="mt-8 rounded-md border border-gray-200 bg-white p-10 text-center shadow-sm">
+        <div className="mt-8 rounded-2xl border border-gray-100 bg-white p-10 text-center shadow-soft">
           <p className="text-base font-semibold text-gray-800">
             {searched ? `No patients match “${q}”` : "No patients registered yet"}
           </p>
@@ -120,7 +123,7 @@ export default async function PatientsPage({
           {!searched && mayRegister && (
             <Link
               href="/patients/new"
-              className="mt-5 inline-flex rounded-sm bg-navy px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-navy-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy"
+              className="mt-5 inline-flex rounded-full bg-navy px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-navy-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy"
             >
               Register first patient
             </Link>
@@ -136,7 +139,7 @@ export default async function PatientsPage({
               <li key={patient.id}>
                 <Link
                   href={`/patients/${patient.id}`}
-                  className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-gray-200 bg-white px-5 py-4 shadow-sm transition-colors hover:border-navy-light hover:bg-navy-tint/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy"
+                  className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-gray-100 bg-white px-5 py-4 shadow-soft transition-colors hover:border-navy-light hover:bg-navy-tint/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy"
                 >
                   <div className="min-w-[220px]">
                     <span className="font-semibold text-gray-900">{patient.full_name}</span>
@@ -163,12 +166,12 @@ export default async function PatientsPage({
               {page > 1 ? (
                 <Link
                   href={`/patients?page=${page - 1}`}
-                  className="rounded-sm border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-navy transition-colors hover:border-navy-light focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy"
+                  className="rounded-xl border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-navy transition-colors hover:border-navy-light focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy"
                 >
                   ← Previous
                 </Link>
               ) : (
-                <span className="rounded-sm border border-gray-200 px-3 py-2 text-sm text-gray-300">
+                <span className="rounded-xl border border-gray-100 px-3 py-2 text-sm text-gray-300">
                   ← Previous
                 </span>
               )}
@@ -178,12 +181,12 @@ export default async function PatientsPage({
               {page < totalPages ? (
                 <Link
                   href={`/patients?page=${page + 1}`}
-                  className="rounded-sm border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-navy transition-colors hover:border-navy-light focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy"
+                  className="rounded-xl border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-navy transition-colors hover:border-navy-light focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy"
                 >
                   Next →
                 </Link>
               ) : (
-                <span className="rounded-sm border border-gray-200 px-3 py-2 text-sm text-gray-300">
+                <span className="rounded-xl border border-gray-100 px-3 py-2 text-sm text-gray-300">
                   Next →
                 </span>
               )}
@@ -191,6 +194,8 @@ export default async function PatientsPage({
           )}
         </>
       )}
-    </main>
+    </AppShell>
   );
 }
+
+

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { AppointmentBookingForm } from "@/components/appointment-booking-form";
+import { AppShell } from "@/components/app-shell";
 import { requirePermission } from "@/lib/auth/session";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -41,7 +42,7 @@ export default async function NewAppointmentPage({
   }
 
   return (
-    <main id="main-content" className="mx-auto w-full max-w-2xl flex-1 px-6 py-10">
+    <AppShell active="appointments" profile={actor} width="narrow">
       <Link
         href="/appointments"
         className="text-sm font-medium text-navy underline-offset-2 hover:underline focus-visible:underline focus-visible:outline-none"
@@ -55,9 +56,10 @@ export default async function NewAppointmentPage({
         first, the system will tell you before anything is saved (FR-15).
       </p>
 
-      <section className="mt-6 rounded-md border border-gray-200 bg-white p-6 shadow-sm">
+      <section className="mt-6 rounded-2xl border border-gray-100 bg-white p-6 shadow-soft">
         <AppointmentBookingForm hps={hpList} preselectedPatient={preselected} />
       </section>
-    </main>
+    </AppShell>
   );
 }
+

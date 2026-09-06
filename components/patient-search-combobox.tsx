@@ -1,5 +1,6 @@
 "use client";
 
+import { Avatar } from "@/components/avatar";
 import { useEffect, useRef, useState } from "react";
 
 interface PatientHit {
@@ -82,7 +83,7 @@ export function PatientSearchCombobox({
 
   if (chosen) {
     return (
-      <div className="flex items-center justify-between rounded-sm border border-navy-light bg-navy-tint px-4 py-3">
+      <div className="flex items-center justify-between rounded-xl border border-navy-light bg-navy-tint px-4 py-3">
         <span className="text-sm font-semibold text-navy">
           {chosen.full_name}
           {chosen.patient_code && (
@@ -120,10 +121,10 @@ export function PatientSearchCombobox({
         placeholder="Type a name, code (P-0198) or phone…"
         aria-label="Search for the patient"
         autoComplete="off"
-        className="block w-full rounded-sm border border-gray-300 bg-white px-3 py-2.5 text-base text-gray-900 outline-none transition-colors placeholder:text-gray-400 focus:border-navy-light focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-navy-light"
+        className="block w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-base text-gray-900 outline-none transition-colors placeholder:text-gray-400 focus:border-navy-light focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-navy-light"
       />
       {open && !stale && state.hits && state.hits.length > 0 && (
-        <ul className="absolute z-10 mt-1 max-h-64 w-full list-none overflow-auto rounded-sm border border-gray-200 bg-white p-0 shadow-lg">
+        <ul className="absolute z-10 mt-1 max-h-64 w-full list-none overflow-auto rounded-xl border border-gray-100 bg-white p-0 shadow-lg">
           {state.hits.map((hit) => (
             <li key={hit.id}>
               <button
@@ -134,11 +135,14 @@ export function PatientSearchCombobox({
                 }}
                 className="block w-full px-4 py-2.5 text-left text-sm text-gray-800 transition-colors hover:bg-navy-tint focus-visible:bg-navy-tint focus-visible:outline-none"
               >
-                <span className="font-medium">{hit.full_name}</span>
-                <span className="ml-2 rounded-full bg-navy-tint px-2 py-0.5 text-xs font-bold text-navy">
-                  {hit.patient_code}
+                <span className="flex items-center gap-2.5">
+                  <Avatar name={hit.full_name} size="sm" />
+                  <span className="font-medium">{hit.full_name}</span>
+                  <span className="rounded-full bg-navy-tint px-2 py-0.5 text-xs font-bold text-navy">
+                    {hit.patient_code}
+                  </span>
+                  {hit.phone && <span className="text-xs text-gray-500">{hit.phone}</span>}
                 </span>
-                {hit.phone && <span className="ml-2 text-xs text-gray-500">{hit.phone}</span>}
               </button>
             </li>
           ))}
@@ -153,3 +157,4 @@ export function PatientSearchCombobox({
     </div>
   );
 }
+

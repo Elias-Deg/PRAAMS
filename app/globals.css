@@ -25,6 +25,11 @@
 
   /* Single legible sans-serif everywhere (§9 Typography) */
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  /* Soft & bubbly surfaces (visual pass §6) */
+  --color-surface: #f3f5fb;
+  --shadow-soft: 0 10px 30px -8px rgb(31 56 100 / 0.12), 0 2px 8px -2px rgb(31 56 100 / 0.06);
+  --shadow-pop: 0 4px 14px -4px rgb(31 56 100 / 0.16);
 }
 
 body {
@@ -35,6 +40,36 @@ body {
 :focus-visible {
   outline: 2px solid var(--color-navy-light);
   outline-offset: 2px;
+}
+
+@keyframes fade-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.animate-fade-in {
+  animation: fade-slide-in 0.25s ease-out both;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.animate-toast-in {
+  animation: toast-in 0.25s ease-out both;
 }
 
 /* Respect prefers-reduced-motion (§9) */

@@ -18,17 +18,19 @@ export default function GlobalError({
       <p className="mt-3 text-sm text-gray-600">
         The problem has been contained to this screen. Try again, and if it keeps
         happening, note this reference for support:{" "}
-        <code className="rounded bg-gray-100 px-1.5 py-0.5 font-mono text-xs">
+        <code className="rounded bg-surface px-1.5 py-0.5 font-mono text-xs">
           {error.digest ?? "N/A"}
         </code>
       </p>
       <button
         type="button"
         onClick={reset}
-        className="mt-6 rounded-sm bg-navy px-5 py-2.5 text-sm font-bold text-white transition-colors hover:bg-navy-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy"
+        className="mt-6 rounded-full bg-navy px-5 py-2.5 text-sm font-bold text-white transition-colors hover:bg-navy-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy"
       >
         Try again
       </button>
     </main>
   );
 }
+
+
