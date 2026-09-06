@@ -1,32 +1,9 @@
-import Link from "next/link";
-
 import { Avatar } from "@/components/avatar";
-import { Icon, type IconName } from "@/components/icons";
+import { Icon } from "@/components/icons";
+import { ShellNav } from "@/components/shell-nav";
 import { RoleBadge } from "@/components/role-badge";
 import { signOut } from "@/lib/actions/auth";
-import type { ProfileRow, UserRole } from "@/types/database";
-
-interface NavItem {
-  href: string;
-  label: string;
-  icon: IconName;
-  roles: UserRole[];
-}
-
-const ALL_ROLES: UserRole[] = [
-  "receptionist",
-  "healthcare_professional",
-  "administrator",
-];
-
-const NAV: NavItem[] = [
-  { href: "/dashboard", label: "Dashboard", icon: "grid", roles: ALL_ROLES },
-  { href: "/patients", label: "Patients", icon: "users", roles: ALL_ROLES },
-  { href: "/appointments", label: "Appointments", icon: "calendar", roles: ALL_ROLES },
-  { href: "/admin/staff", label: "Staff", icon: "userCog", roles: ["administrator"] },
-  { href: "/admin/permissions", label: "Permissions", icon: "shield", roles: ["administrator"] },
-  { href: "/admin/reports", label: "Reports", icon: "chart", roles: ["administrator"] },
-];
+import type { ProfileRow } from "@/types/database";
 
 const WIDTHS = {
   narrow: "max-w-2xl",
@@ -39,41 +16,18 @@ const WIDTHS = {
  * Persistent authenticated shell: navy sidebar (desktop) / top bar (mobile)
  * with role-filtered navigation, active-section highlight, user chip with
  * avatar + sign-out, and the #main-content landmark for the skip link.
- * Pure presentation — pages keep all logic and data fetching.
+ * Rendered by the (app) layout so the shell never remounts between pages —
+ * loading skeletons appear inside it, already wearing the final design.
  */
 export function AppShell({
-  active,
   profile,
   children,
   width = "wide",
 }: {
-  active: string;
   profile: ProfileRow;
   children: React.ReactNode;
   width?: keyof typeof WIDTHS;
 }): React.ReactElement {
-  const items = NAV.filter((item) => item.roles.includes(profile.role));
-
-  const navLink = (item: NavItem): React.ReactElement => {
-    // Tolerate call-sites passing the section key with or without the leading slash.
-    const isActive = active === item.href || active === item.href.replace(/^\//, "");
-    return (
-      <Link
-        key={item.href}
-        href={item.href}
-        aria-current={isActive ? "page" : undefined}
-        className={`group flex shrink-0 items-center gap-3 rounded-2xl px-3 py-2 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white active:scale-[0.98] lg:w-full ${
-          isActive
-            ? "bg-white text-navy shadow-soft"
-            : "text-white/75 hover:bg-white/10 hover:text-white"
-        }`}
-      >
-        <Icon name={item.icon} className="h-5 w-5 shrink-0" />
-        <span className="hidden lg:inline">{item.label}</span>
-      </Link>
-    );
-  };
-
   return (
     <div className="min-h-dvh bg-surface lg:grid lg:grid-cols-[260px_1fr]">
       <aside className="bg-navy text-white lg:sticky lg:top-0 lg:m-3 lg:flex lg:h-[calc(100dvh-1.5rem)] lg:flex-col lg:rounded-3xl lg:shadow-soft print:hidden">
@@ -94,9 +48,7 @@ export function AppShell({
 
         {/* Mobile: horizontal icon nav / Desktop: full sidebar */}
         <nav aria-label="Primary" className="lg:flex-1 lg:overflow-y-auto lg:py-3">
-          <ul className="flex list-none gap-1 overflow-x-auto p-3 lg:flex-col lg:overflow-visible lg:p-0">
-            {items.map(navLink)}
-          </ul>
+          <ShellNav role={profile.role} />
         </nav>
 
         {/* User chip — desktop only (mobile uses the header sign-out) */}

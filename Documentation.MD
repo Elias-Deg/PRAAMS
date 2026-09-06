@@ -146,6 +146,10 @@ proxy.ts                      request pipeline (auth refresh, idle, gates)
 app/
   layout.tsx  globals.css     root shell: Inter font, tokens <style>, IdleCookieWatcher
   page.tsx                    "/" stub redirect (proxy does real routing)
+  (app)/layout.tsx            **authenticated route group**: owns AppShell → the
+                              sidebar persists across pages and loading skeletons
+                              render inside it (no old-design flash)
+  (app)/dashboard/…  (app)/patients/…  (app)/appointments/…  (app)/admin/…  ✓ with segment loading.tsx inside the shell
   login/{page,login-form}.tsx UC-01 sign-in screen (+ client form)
   dashboard/page.tsx          role-aware landing; module cards live-link ready features
   admin/staff/…               UC-02: list / new / [id] edit+danger-zone
@@ -153,6 +157,7 @@ app/
   patients/…                  Phase 3 route tree (search/new/[id]/records)
 components/
   app-shell.tsx               persistent sidebar shell (nav, user chip, widths)
+  shell-nav.tsx               client nav (pathname-active) used by AppShell
   icons.tsx · avatar.tsx      inline SVG set · colored-initial person circles
   toast.tsx · skeleton.tsx    auto-dismiss notices · loading skeletons
   skip-link.tsx · role-badge.tsx · print-button.tsx
@@ -520,6 +525,21 @@ Open assumptions to revisit with the client/document if graded on them:
   routes, schema or policy changes. Verified: lint 0 · build 0 · 5-check
   render smoke (login card + pill submit + surface bg, floating sidebar,
   stat gradient/lift, pill bars, avatar rings).
+- **2026-08-29 · Shell loading fix (route-group refactor)**: loading skeletons
+  were flash-showing the old hard-edged design because each page's placeholder
+  faked the shell. Moved all authenticated routes into an `(app)` route group
+  (URLs unchanged) with a shared `app/(app)/layout.tsx` that owns `AppShell` —
+  the sidebar now stays permanently mounted across navigations (no remount
+  flicker) and every segment `loading.tsx` renders INSIDE it as a bare
+  in-shell fragment, already wearing the §6 soft design. Nav extracted to a
+  client `ShellNav` (pathname-based `startsWith` matching → drill-down pages
+  keep their section highlighted). Pages unshelled to `<div>` content
+  wrappers; segment widths preserved. Landmine discovered: PowerShell
+  `Set-Content` wrote loading files as cp1252 → Turbopack "invalid utf-8 /
+  failed to convert rope" build errors; re-encoded to UTF-8. Verified: lint 0 ·
+  build 0 · 9-check smoke (sidebar persists + soft styles, active nav incl.
+  patient detail, skeleton fragment, login standalone, anon gate, booking
+  dropdown regression).
 
 
 
