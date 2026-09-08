@@ -56,7 +56,7 @@ export function Topbar({
           href="/appointments"
           aria-label="Open appointments"
           title="Appointments"
-          className="relative rounded-full p-1.5 text-gray-700 transition-colors hover:bg-navy-tint focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy"
+          className="relative rounded-full p-1.5 text-gray-700 transition-colors hover:animate-wiggle hover:bg-navy-tint focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy"
         >
           <Icon name="bell" className="h-5 w-5" />
           <span

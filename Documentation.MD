@@ -150,7 +150,8 @@ app/
                               sidebar persists across pages and loading skeletons
                               render inside it (no old-design flash)
   (app)/dashboard/…  (app)/patients/…  (app)/appointments/…  (app)/admin/…  ✓ with segment loading.tsx inside the shell
-  login/{page,login-form}.tsx UC-01 sign-in screen (+ client form)
+  login/{page,login-form}.tsx UC-01 sign-in: welcome-panel card (§14 login v2)
+                              with client form (Zod, lockout + idle notices)
   dashboard/page.tsx          role-aware landing; module cards live-link ready features
   admin/staff/…               UC-02: list / new / [id] edit+danger-zone
   admin/permissions/page.tsx  UC-03 capability matrix editor
@@ -162,6 +163,10 @@ components/
                               search (GET /patients?q=), appointments bell, user chip
   shell-nav.tsx               client nav (pathname-active, blue pill) used by AppShell
   grouped-bars.tsx            dependency-free booked/completed grouped bar chart
+  schedule/mini-calendar.tsx  client mini month picker (dots on busy days → Day view)
+  schedule/time-grid.tsx      continuous EAT time grid, pastel status blocks, now-line
+  schedule/month-grid.tsx     compact month view with per-day event chips
+  schedule/side-panel.tsx     schedule side panel: Team/Service filter tabs
   icons.tsx · avatar.tsx      inline SVG set · colored-initial person circles
   toast.tsx · skeleton.tsx    auto-dismiss notices · loading skeletons
   skip-link.tsx · role-badge.tsx · print-button.tsx
@@ -286,7 +291,7 @@ every toggle audited.
 
 | Route | Use case | State | Key notes |
 |---|---|---|---|
-| `/login` | UC-01 | ✅ | Zod dual validation; lockout notices; idle-return banner `?reason=idle` |
+| `/login` | UC-01 | ✅ | Zod dual validation; lockout notices; idle-return banner `?reason=idle`; v2 welcome-panel design (§14) |
 | `/dashboard` | landing | ✅ | dashboard-v2 reference cards: outcome rates, AM/PM sessions, booked-vs-completed week chart, status split |
 | `/admin/staff` (+`/new`,`/[id]`) | UC-02 | ✅ | CRUD+status lifecycle, guardrails §4.2, notice map dictionary |
 | `/admin/permissions` | UC-03 | ✅ | matrix editor; narrow-only semantics |
@@ -295,7 +300,7 @@ every toggle audited.
 | `/patients/[id]` | UC-05 view/UC-08 | ✅ | demographics card, registrar attribution, permanent history timeline w/ author embed |
 | `/patients/[id]/edit` | UC-05 update | ✅ | gated `patients.edit`; RLS-path update; audit UPDATE_PATIENT |
 | `/patients/[id]/records/new` | UC-07 | 🚧 form shipped · E2E of addMedicalRecord pending manual browser pass | gated `records.add`; permanence warning inline |
-| `/appointments` | UC-11 | ✅ | day calendar, prev/next + HP filter, status chips, empty state CTA |
+| `/appointments` | UC-11 | ✅ | schedule v2 (§14 reference design): time-grid Weekly/Daily + Monthly views, mini-cal side panel, staff/status filters, now-line, event blocks → detail |
 | `/appointments/new` | UC-09 | ✅ | patient combobox, slot grid via /api/appointments/slots, race→23505 handling |
 | `/appointments/[id]` | UC-10 | ✅ | reschedule w/ excludeIso, confirm-dialog cancel, terminal read-only states |
 | `/admin/reports` (+`/export`) | UC-12 | ✅ | 3 report types over date ranges; CSV export w/ attachment filename; print/save-as-PDF via PrintButton; 500-row cap w/ truncation notice; 403/401 JSON on export route |
@@ -562,6 +567,66 @@ Open assumptions to revisit with the client/document if graded on them:
   shares as the legend. Removed orphaned `StatCard`/`BarChart`/
   `ActivityFeed`. Verified: lint 0 · build 0 · live smoke (shell classes,
   hero, topbar search, four cards, login + patients pages intact).
+- **2026-08-29 · Login v2 (§14 reference design)**: rebuilt the UC-01 screen
+  into the dashboard's visual language: centered rounded-3xl card on the
+  surface bg, split 45/55 — left panel is the blue accent gradient
+  (`from-accent to-accent-light`) with "Welcome to", a circular white logo
+  PLACEHOLDER (blue medical-plus mark; owner will drop in the real logo asset
+  later — swap the inner SVG at the marked spot in app/login/page.tsx),
+  PRAAMS wordmark, portal blurb and a quiet "Secure staff access" footer;
+  a wavy SVG divider blends the panel into the white form side (desktop only).
+  Form side: Poppins heading "Sign in to your account.", underline-style
+  inputs (border-b-2, accent focus), soft red alert banners for rejected/
+  locked states, info banner for `?reason=idle`, full-width blue pill submit
+  with bubbly hover lift. All auth logic untouched (Zod schema, lockout RPCs,
+  idle notice, redirect). Verified: lint 0 · build 0 · 10-check live smoke
+  (gradient panel, placeholder, wave, underlines, pill, old strip gone, form
+  wiring, idle banner, dashboard shell unaffected, anon gate).
+- **2026-08-29 · Login v2.1 — pill fields + playful motion**: text fields are
+  now soft pills (rounded-full, surface fill, focus lifts to white with an
+  accent ring shadow); motion added via three theme animation tokens
+  (`--animate-pop-in` springy entrance, `--animate-float` loop,
+  `--animate-wiggle` hover): the card springs in, alert/idle banners pop,
+  the logo floats and wiggles on hover, translucent bubbles drift in the
+  gradient panel, and the submit button pulses while submitting. Everything
+  is neutralized by the global prefers-reduced-motion rule. Verified: lint 0 ·
+  build 0 · 10-check live smoke (pills, focus ring, pop-in, float/wiggle,
+  banners, dashboard unaffected, anon gate).
+- **2026-08-29 · Dashboard v2.2 — playful motion extended**: same animation
+  language applied to the dashboard view. Cards spring in with a staggered
+  cascade (0/120/240/360ms inline delays), lift on hover, and their chevron
+  shortcuts wiggle when the card is hovered; outcome/session rows became soft
+  pills (surface fill → navy-tint hover); chart bars grow from the ground
+  with a per-day stagger (new `--animate-grow-bar` token, bottom transform
+  origin); the two map dots drift; loading skeletons pop with the same
+  stagger; sidebar brand mark wiggles on hover and the patients hero card
+  pops in once per load; topbar bell wiggles on hover. `pop-in` fill mode
+  switched `both` → `backwards` so entrance animation doesn't lock the
+  transform (keeps hover-lift working). All motion neutralized by the global
+  prefers-reduced-motion rule. Verified: lint 0 · build 0 · 10-check live
+  smoke (stagger, hover-lift, wiggle, pills, growing bars, floating dots,
+  skeleton stagger, login regression, anon gate).
+- **2026-08-29 · Appointments schedule v2 (§14 reference design)**: rebuilt
+  UC-11 around the user-supplied calendar reference. Layout widened
+  (`xwide` → max-w-7xl — safe because every page self-constrains its own
+  content). New `components/schedule/*`: **TimeGrid** — continuous hour rows
+  (09:00–17:00, EAT +03:00 gutter), events absolutely positioned by Addis
+  time as pastel status blocks (patient name, time range, clinician chip;
+  same-start events split side-by-side), today column highlighted, Sundays
+  "Closed", red now-line with live time badge (only when today is in view
+  within clinic hours); **MonthGrid** — Monday-start compact grid, up to 3
+  pastel chips per day + "more", cells → Day view; **SidePanel** — mini
+  month calendar (client: local month browsing, dots on busy days, pick →
+  Day view) and Team/Service tabs (Team = clinician filter with avatars,
+  Service = status shown/hidden checkboxes doubling as the color legend);
+  toolbar with Today/‹›/range label and Daily/Weekly/Monthly segmented
+  switcher — all pure server Links except the mini calendar. Filters ride
+  URL params (`staff`, `status` CSV, `tab`); empty hidden-status set uses a
+  zero-uuid filter (PostgREST-safe). Preserved: Toast notices, `?notice=`
+  confirmations, maySchedule gating, RLS-path queries with patient/hp
+  embeds, detail links, empty-state CTA. Verified: lint 0 · build 0 ·
+  13-check live smoke (all three views over a real seeded appointment,
+  staff + status filters, toast, receptionist render, anon gate).
 
 
 

@@ -28,7 +28,7 @@ export default async function AppLayout({
     .limit(1);
 
   return (
-    <AppShell profile={profile} patientCount={patientCount ?? 0}>
+    <AppShell profile={profile} patientCount={patientCount ?? 0} width="xwide">
       {children}
     </AppShell>
   );

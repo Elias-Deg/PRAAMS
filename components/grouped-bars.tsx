@@ -47,19 +47,25 @@ export function GroupedBars({
             />
           ))}
           <div className="absolute inset-0 flex items-end justify-around gap-1 px-1">
-            {data.map((d) => (
+            {data.map((d, index) => (
               <div
                 key={d.label}
                 title={`${d.label} — booked ${d.booked} · completed ${d.completed}`}
                 className="flex h-full items-end gap-1"
               >
                 <div
-                  className="w-2.5 rounded-t-sm bg-accent-light transition-colors hover:bg-accent"
-                  style={{ height: `${Math.max(2, (d.booked / nice) * 100)}%` }}
+                  className="w-2.5 animate-grow-bar rounded-t-sm bg-accent-light transition-colors hover:bg-accent [transform-origin:bottom]"
+                  style={{
+                    height: `${Math.max(2, (d.booked / nice) * 100)}%`,
+                    animationDelay: `${index * 70}ms`,
+                  }}
                 />
                 <div
-                  className="w-2.5 rounded-t-sm bg-navy transition-colors hover:bg-navy-light"
-                  style={{ height: `${Math.max(2, (d.completed / nice) * 100)}%` }}
+                  className="w-2.5 animate-grow-bar rounded-t-sm bg-navy transition-colors hover:bg-navy-light [transform-origin:bottom]"
+                  style={{
+                    height: `${Math.max(2, (d.completed / nice) * 100)}%`,
+                    animationDelay: `${index * 70}ms`,
+                  }}
                 />
               </div>
             ))}

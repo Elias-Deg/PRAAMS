@@ -48,9 +48,10 @@ function pctOf(part: number, total: number): number {
 }
 
 /**
- * Dashboard v2 (§14 reference design): outcome-rate rows, today's sessions
- * with in-progress toggles, a booked-vs-completed week chart and a status
- * split card — every number computed from live tables (role-scoped for HPs).
+ * Dashboard v2 (§14 reference design) with the playful motion language:
+ * cards spring in with a stagger and lift on hover, stat rows are soft
+ * pills, chart bars grow from the ground and map dots drift. Every number
+ * is computed from live tables (role-scoped for HPs).
  */
 export default async function DashboardPage(): Promise<React.ReactElement> {
   const profile = await getCurrentProfile();
@@ -198,19 +199,25 @@ export default async function DashboardPage(): Promise<React.ReactElement> {
 
 /**
  * Card chrome shared by the four dashboard widgets: Poppins title + a
- * chevron shortcut into the section that owns the data.
+ * chevron shortcut. Playful: springs in on load (staggered via `delay`),
+ * lifts on hover, and the chevron wiggles when the card is hovered.
  */
 function Card({
   title,
   href,
+  delay = 0,
   children,
 }: {
   title: string;
   href: string;
+  delay?: number;
   children: React.ReactNode;
 }): React.ReactElement {
   return (
-    <section className="rounded-2xl bg-white p-5 shadow-soft">
+    <section
+      style={{ animationDelay: `${delay}ms` }}
+      className="group animate-pop-in rounded-3xl bg-white p-5 shadow-soft transition-all duration-300 hover:-translate-y-1 hover:shadow-pop"
+    >
       <div className="flex items-center justify-between">
         <h2 className="font-display text-base font-bold text-gray-900">{title}</h2>
         <Link
@@ -218,7 +225,7 @@ function Card({
           aria-label={`Open ${title.toLowerCase()}`}
           className="rounded-full p-1.5 text-gray-400 transition-colors hover:bg-navy-tint hover:text-navy focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy"
         >
-          <Icon name="chevron" className="h-4 w-4" />
+          <Icon name="chevron" className="h-4 w-4 group-hover:animate-wiggle" />
         </Link>
       </div>
       {children}
@@ -239,9 +246,9 @@ function StatusMap(): React.ReactElement {
         <path d="M292 118 L326 112 336 134 308 148 Z" />
       </g>
       <circle cx="70" cy="70" r="9" fill="#1f3864" opacity="0.18" />
-      <circle cx="70" cy="70" r="4.5" fill="#1f3864" />
+      <circle cx="70" cy="70" r="4.5" fill="#1f3864" className="animate-float" />
       <circle cx="298" cy="54" r="9" fill="#56ccf2" opacity="0.25" />
-      <circle cx="298" cy="54" r="4.5" fill="#56ccf2" />
+      <circle cx="298" cy="54" r="4.5" fill="#56ccf2" className="animate-float [animation-delay:1.2s]" />
     </svg>
   );
 }
@@ -252,10 +259,13 @@ function DashboardView({ data }: { data: DashboardData }): React.ReactElement {
       <div className="grid gap-5 lg:grid-cols-[1.5fr_1fr]">
         {/* Left column */}
         <div className="space-y-5">
-          <Card title="Appointments overview" href="/appointments">
-            <ul className="mt-1 list-none divide-y divide-gray-100 p-0">
+          <Card title="Appointments overview" href="/appointments" delay={0}>
+            <ul className="mt-4 list-none space-y-2.5 p-0">
               {data.outcomes.map((o) => (
-                <li key={o.title} className="flex items-center gap-4 py-4 first:pt-3 last:pb-0">
+                <li
+                  key={o.title}
+                  className="flex items-center gap-4 rounded-full bg-surface px-4 py-3 transition-all duration-200 hover:bg-navy-tint hover:shadow-soft"
+                >
                   <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-accent text-white shadow-pop">
                     <Icon name={o.icon} className="h-5 w-5" />
                   </span>
@@ -274,7 +284,7 @@ function DashboardView({ data }: { data: DashboardData }): React.ReactElement {
             </ul>
           </Card>
 
-          <Card title="Weekly appointments" href="/appointments">
+          <Card title="Weekly appointments" href="/appointments" delay={240}>
             <div className="mt-4">
               <GroupedBars
                 data={data.week}
@@ -296,11 +306,14 @@ function DashboardView({ data }: { data: DashboardData }): React.ReactElement {
 
         {/* Right column */}
         <div className="space-y-5">
-          <Card title="Today's sessions" href="/appointments">
-            <ul className="mt-1 list-none divide-y divide-gray-100 p-0">
+          <Card title="Today's sessions" href="/appointments" delay={120}>
+            <ul className="mt-4 list-none space-y-2.5 p-0">
               {data.sessions.map((s) => (
-                <li key={s.title} className="flex items-center gap-4 py-4 first:pt-3 last:pb-0">
-                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-accent text-white shadow-pop">
+                <li
+                  key={s.title}
+                  className="flex items-center gap-4 rounded-full bg-surface px-4 py-3 transition-all duration-200 hover:bg-navy-tint hover:shadow-soft"
+                >
+                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-accent text-white shadow-pop">
                     <Icon name="calendar" className="h-5 w-5" />
                   </span>
                   <div className="min-w-0 flex-1">
@@ -331,7 +344,7 @@ function DashboardView({ data }: { data: DashboardData }): React.ReactElement {
             </ul>
           </Card>
 
-          <Card title="By status" href={data.statusHref}>
+          <Card title="By status" href={data.statusHref} delay={360}>
             <div className="mt-2">
               <StatusMap />
             </div>

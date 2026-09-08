@@ -10,7 +10,7 @@ const WIDTHS = {
   narrow: "max-w-2xl",
   medium: "max-w-3xl",
   wide: "max-w-5xl",
-  xwide: "max-w-6xl",
+  xwide: "max-w-7xl",
 } as const;
 
 /**
@@ -38,10 +38,10 @@ export function AppShell({
     <div className="min-h-dvh bg-surface lg:grid lg:grid-cols-[248px_1fr]">
       <aside className="bg-sidebar text-white lg:sticky lg:top-0 lg:flex lg:h-dvh lg:flex-col print:hidden">
         {/* Brand + mobile sign-out */}
-        <div className="flex h-16 shrink-0 items-center gap-2.5 border-b border-white/10 px-5">
+        <div className="group flex h-16 shrink-0 items-center gap-2.5 border-b border-white/10 px-5">
           <span
             aria-hidden
-            className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent shadow-pop"
+            className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent shadow-pop group-hover:animate-wiggle"
           >
             <svg
               viewBox="0 0 24 24"
@@ -71,7 +71,7 @@ export function AppShell({
 
         {/* Hero count — desktop only */}
         <div className="hidden px-4 pt-5 lg:block">
-          <div className="rounded-2xl bg-gradient-to-br from-accent-light to-accent p-4 shadow-pop">
+          <div className="animate-pop-in rounded-2xl bg-gradient-to-br from-accent-light to-accent p-4 shadow-pop">
             <p className="font-display text-3xl font-bold leading-none">
               {patientCount.toLocaleString("en-US")}
             </p>
