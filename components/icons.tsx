@@ -6,7 +6,15 @@ export type IconName =
   | "userCog"
   | "shield"
   | "chart"
-  | "logout";
+  | "logout"
+  | "search"
+  | "bell"
+  | "plus"
+  | "trend"
+  | "chevron"
+  | "check"
+  | "close"
+  | "clock";
 
 const PATHS: Record<IconName, React.ReactNode> = {
   grid: (
@@ -57,6 +65,34 @@ const PATHS: Record<IconName, React.ReactNode> = {
     <>
       <path d="M14 4.5H6.5a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2H14" />
       <path d="M17 15.5 20.5 12 17 8.5M20.5 12H10" />
+    </>
+  ),
+  search: (
+    <>
+      <circle cx="11" cy="11" r="6.5" />
+      <path d="m16 16 4.5 4.5" />
+    </>
+  ),
+  bell: (
+    <>
+      <path d="M18 10a6 6 0 1 0-12 0c0 4.5-2 5.5-2 5.5h16s-2-1-2-5.5" />
+      <path d="M10 19a2.2 2.2 0 0 0 4 0" />
+    </>
+  ),
+  plus: <path d="M12 5v14M5 12h14" />,
+  trend: (
+    <>
+      <path d="m3.5 16 5-5.5 3.5 3 5.5-6" />
+      <path d="M14 7.5h3.5V11" />
+    </>
+  ),
+  chevron: <path d="m9 5.5 6.5 6.5L9 18.5" />,
+  check: <path d="m5 12.5 4.5 4.5L19 7.5" />,
+  close: <path d="M6.5 6.5l11 11M17.5 6.5l-11 11" />,
+  clock: (
+    <>
+      <circle cx="12" cy="12" r="8.5" />
+      <path d="M12 7.5V12l3 2.5" />
     </>
   ),
 };

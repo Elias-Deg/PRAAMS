@@ -156,8 +156,12 @@ app/
   admin/permissions/page.tsx  UC-03 capability matrix editor
   patients/…                  Phase 3 route tree (search/new/[id]/records)
 components/
-  app-shell.tsx               persistent sidebar shell (nav, user chip, widths)
-  shell-nav.tsx               client nav (pathname-active) used by AppShell
+  app-shell.tsx               persistent dark sidebar shell (brand, patients hero
+                              card, nav, quick actions) + content Topbar mount
+  topbar.tsx                  client top bar: section title (dashboard), patient
+                              search (GET /patients?q=), appointments bell, user chip
+  shell-nav.tsx               client nav (pathname-active, blue pill) used by AppShell
+  grouped-bars.tsx            dependency-free booked/completed grouped bar chart
   icons.tsx · avatar.tsx      inline SVG set · colored-initial person circles
   toast.tsx · skeleton.tsx    auto-dismiss notices · loading skeletons
   skip-link.tsx · role-badge.tsx · print-button.tsx
@@ -283,7 +287,7 @@ every toggle audited.
 | Route | Use case | State | Key notes |
 |---|---|---|---|
 | `/login` | UC-01 | ✅ | Zod dual validation; lockout notices; idle-return banner `?reason=idle` |
-| `/dashboard` | landing | ✅ | role-aware copy; live module cards for shipped features |
+| `/dashboard` | landing | ✅ | dashboard-v2 reference cards: outcome rates, AM/PM sessions, booked-vs-completed week chart, status split |
 | `/admin/staff` (+`/new`,`/[id]`) | UC-02 | ✅ | CRUD+status lifecycle, guardrails §4.2, notice map dictionary |
 | `/admin/permissions` | UC-03 | ✅ | matrix editor; narrow-only semantics |
 | `/patients` (search) | UC-06 | ✅ | name/code/phone merge-search; paginated recent register; empty states |
@@ -540,6 +544,24 @@ Open assumptions to revisit with the client/document if graded on them:
   build 0 · 9-check smoke (sidebar persists + soft styles, active nav incl.
   patient detail, skeleton fragment, login standalone, anon gate, booking
   dropdown regression).
+- **2026-08-29 · Dashboard v2 (user-supplied reference design)**: rebuilt the
+  shell + dashboard to match the provided screenshot. Shell: full-height dark
+  sidebar (`--color-sidebar #1d1d2e`, square, replaces floating navy pill),
+  blue accent tokens (`--color-accent #2f80ed / light #56ccf2`), Poppins as
+  display font (Inter stays body), live **registered-patients hero card**
+  (count queried in (app)/layout), brand mark, bottom quick actions (New
+  patient for receptionist/admin, Log out). New client `Topbar`: section title
+  (dashboard only — other pages keep their own headers), **working patient
+  search** GET → `/patients?q=` (register already read `q`), appointments bell
+  shortcut, name+role+avatar chip. Dashboard cards, all data real + role-scoped
+  (HP filtered by staff_id): appointment outcome rates (completion/cancel/
+  no-show %, last 30 days), today's AM/PM sessions with `+N booked` and
+  toggles reflecting the actual Addis-clock session state, `GroupedBars`
+  booked-vs-completed per weekday (dependency-free, y-axis + gridlines),
+  "By status" card = decorative SVG world map with real scheduled/completed
+  shares as the legend. Removed orphaned `StatCard`/`BarChart`/
+  `ActivityFeed`. Verified: lint 0 · build 0 · live smoke (shell classes,
+  hero, topbar search, four cards, login + patients pages intact).
 
 
 

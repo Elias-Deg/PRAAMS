@@ -1,7 +1,8 @@
-import { Avatar } from "@/components/avatar";
+import Link from "next/link";
+
 import { Icon } from "@/components/icons";
 import { ShellNav } from "@/components/shell-nav";
-import { RoleBadge } from "@/components/role-badge";
+import { Topbar } from "@/components/topbar";
 import { signOut } from "@/lib/actions/auth";
 import type { ProfileRow } from "@/types/database";
 
@@ -13,28 +14,50 @@ const WIDTHS = {
 } as const;
 
 /**
- * Persistent authenticated shell: navy sidebar (desktop) / top bar (mobile)
- * with role-filtered navigation, active-section highlight, user chip with
- * avatar + sign-out, and the #main-content landmark for the skip link.
- * Rendered by the (app) layout so the shell never remounts between pages —
- * loading skeletons appear inside it, already wearing the final design.
+ * Persistent authenticated shell (dashboard-v2 design, §14): full-height dark
+ * sidebar with brand mark, live patients hero card, role-filtered nav and
+ * quick actions; the content column carries the Topbar (section title,
+ * patient search, user chip). Rendered by the (app) layout so the shell never
+ * remounts — loading skeletons appear inside it, already wearing the design.
  */
 export function AppShell({
   profile,
+  patientCount,
   children,
   width = "wide",
 }: {
   profile: ProfileRow;
+  patientCount: number;
   children: React.ReactNode;
   width?: keyof typeof WIDTHS;
 }): React.ReactElement {
+  const mayRegister =
+    profile.role === "receptionist" || profile.role === "administrator";
+
   return (
-    <div className="min-h-dvh bg-surface lg:grid lg:grid-cols-[260px_1fr]">
-      <aside className="bg-navy text-white lg:sticky lg:top-0 lg:m-3 lg:flex lg:h-[calc(100dvh-1.5rem)] lg:flex-col lg:rounded-3xl lg:shadow-soft print:hidden">
+    <div className="min-h-dvh bg-surface lg:grid lg:grid-cols-[248px_1fr]">
+      <aside className="bg-sidebar text-white lg:sticky lg:top-0 lg:flex lg:h-dvh lg:flex-col print:hidden">
         {/* Brand + mobile sign-out */}
-        <div className="flex h-16 shrink-0 items-center justify-between rounded-t-3xl border-b border-white/10 px-6">
-          <span className="text-base font-bold tracking-widest">PRAAMS</span>
-          <form action={signOut} className="lg:hidden">
+        <div className="flex h-16 shrink-0 items-center gap-2.5 border-b border-white/10 px-5">
+          <span
+            aria-hidden
+            className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent shadow-pop"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2.4}
+              strokeLinecap="round"
+              className="h-4 w-4 text-white"
+            >
+              <path d="M12 5v14M5 12h14" />
+            </svg>
+          </span>
+          <span className="font-display text-base font-bold tracking-wide">
+            PRAAMS Clinic
+          </span>
+          <form action={signOut} className="ml-auto lg:hidden">
             <button
               type="submit"
               aria-label="Sign out"
@@ -46,38 +69,52 @@ export function AppShell({
           </form>
         </div>
 
+        {/* Hero count — desktop only */}
+        <div className="hidden px-4 pt-5 lg:block">
+          <div className="rounded-2xl bg-gradient-to-br from-accent-light to-accent p-4 shadow-pop">
+            <p className="font-display text-3xl font-bold leading-none">
+              {patientCount.toLocaleString("en-US")}
+            </p>
+            <p className="mt-2 flex items-center gap-1.5 text-xs font-medium text-white/85">
+              <Icon name="users" className="h-3.5 w-3.5" />
+              Registered patients
+            </p>
+          </div>
+        </div>
+
         {/* Mobile: horizontal icon nav / Desktop: full sidebar */}
-        <nav aria-label="Primary" className="lg:flex-1 lg:overflow-y-auto lg:py-3">
+        <nav aria-label="Primary" className="lg:min-h-0 lg:flex-1 lg:overflow-y-auto">
           <ShellNav role={profile.role} />
         </nav>
 
-        {/* User chip — desktop only (mobile uses the header sign-out) */}
-        <div className="hidden border-t border-white/10 p-3 lg:block">
-          <div className="flex items-center gap-3 rounded-2xl bg-white/5 p-3">
-            <Avatar name={profile.full_name} size="md" />
-            <div className="min-w-0">
-              <p className="truncate text-sm font-semibold">{profile.full_name}</p>
-              <div className="mt-0.5">
-                <RoleBadge role={profile.role} />
-              </div>
-            </div>
-          </div>
+        {/* Quick actions — desktop only (mobile signs out from the brand row) */}
+        <div className="hidden border-t border-white/10 px-3 py-4 lg:block">
+          {mayRegister && (
+            <Link
+              href="/patients/new"
+              className="flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium text-white/60 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white active:scale-[0.98]"
+            >
+              <Icon name="plus" className="h-5 w-5" />
+              New patient
+            </Link>
+          )}
           <form action={signOut}>
             <button
               type="submit"
-              className="mt-2 flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-white/75 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white active:scale-[0.98]"
+              className="flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium text-white/60 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white active:scale-[0.98]"
             >
-              <Icon name="logout" className="h-4 w-4" />
-              Sign out
+              <Icon name="logout" className="h-5 w-5" />
+              Log out
             </button>
           </form>
         </div>
       </aside>
 
       <div className="flex min-w-0 flex-col">
+        <Topbar fullName={profile.full_name} role={profile.role} />
         <main
           id="main-content"
-          className={`mx-auto w-full ${WIDTHS[width]} flex-1 animate-fade-in px-4 py-8 sm:px-6 lg:px-10 lg:py-10`}
+          className={`mx-auto w-full ${WIDTHS[width]} flex-1 animate-fade-in px-4 py-8 sm:px-6 lg:px-10 lg:py-8`}
         >
           {children}
         </main>

@@ -30,6 +30,14 @@
   --color-surface: #f3f5fb;
   --shadow-soft: 0 10px 30px -8px rgb(31 56 100 / 0.12), 0 2px 8px -2px rgb(31 56 100 / 0.06);
   --shadow-pop: 0 4px 14px -4px rgb(31 56 100 / 0.16);
+
+  /* Dashboard v2 reference design (§14): dark sidebar + blue accent family */
+  --color-sidebar: #1d1d2e;
+  --color-accent: #2f80ed;
+  --color-accent-light: #56ccf2;
+
+  /* Poppins for display headings (§14), Inter stays the body font */
+  --font-display: var(--font-poppins), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 }
 
 body {

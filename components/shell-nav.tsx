@@ -31,6 +31,7 @@ const NAV: NavItem[] = [
 /**
  * Sidebar navigation (client so the active section tracks the real pathname —
  * drill-down pages like /patients/[id] keep their section highlighted).
+ * Dashboard-v2 styling: blue active pill on the dark sidebar.
  */
 export function ShellNav({ role }: { role: UserRole }): React.ReactElement {
   const pathname = usePathname();
@@ -39,7 +40,7 @@ export function ShellNav({ role }: { role: UserRole }): React.ReactElement {
     pathname === href || pathname.startsWith(`${href}/`);
 
   return (
-    <ul className="flex list-none gap-1 overflow-x-auto p-3 lg:flex-col lg:overflow-visible lg:p-0">
+    <ul className="flex list-none gap-1 overflow-x-auto p-3 lg:flex-col lg:overflow-visible lg:px-3 lg:py-4">
       {NAV.filter((item) => item.roles.includes(role)).map((item) => {
         const active = isActive(item.href);
         return (
@@ -47,10 +48,10 @@ export function ShellNav({ role }: { role: UserRole }): React.ReactElement {
             <Link
               href={item.href}
               aria-current={active ? "page" : undefined}
-              className={`group flex shrink-0 items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white active:scale-[0.98] lg:w-full ${
+              className={`group flex shrink-0 items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white active:scale-[0.98] lg:w-full ${
                 active
-                  ? "bg-white text-navy shadow-pop"
-                  : "text-white/75 hover:bg-white/10 hover:text-white"
+                  ? "bg-accent font-semibold text-white shadow-pop"
+                  : "font-medium text-white/60 hover:bg-white/10 hover:text-white"
               }`}
             >
               <Icon name={item.icon} className="h-5 w-5 shrink-0" />
