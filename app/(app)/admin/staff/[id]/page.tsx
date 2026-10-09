@@ -62,7 +62,7 @@ export default async function EditStaffPage({
         ← Back to staff list
       </Link>
 
-      <h1 className="mt-4 text-2xl font-bold text-navy">{member.full_name}</h1>
+      <h1 className="mt-4 font-display text-2xl font-bold text-gray-900">{member.full_name}</h1>
       <p className="mt-1 text-sm text-gray-600">
         Account details · created{" "}
         {new Intl.DateTimeFormat("en-GB", { dateStyle: "medium" }).format(
@@ -70,7 +70,7 @@ export default async function EditStaffPage({
         )}
       </p>
 
-      <section className="mt-6 rounded-2xl border border-gray-100 bg-white p-6 shadow-soft">
+      <section className="mt-6 rounded-3xl bg-white p-6 shadow-soft">
         <StaffAccountForm
           mode="edit"
           profileId={member.id}
@@ -121,7 +121,7 @@ export default async function EditStaffPage({
                   : `Reactivate ${member.full_name}?`
               }
               disabled={!canDeactivate}
-              className={`rounded-xl px-4 py-2 text-sm font-bold text-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy disabled:cursor-not-allowed disabled:opacity-40 ${
+              className={`rounded-full px-5 py-2.5 font-display text-sm font-bold text-white shadow-pop transition-all hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy disabled:cursor-not-allowed disabled:opacity-40 ${
                 member.status === "active"
                   ? "bg-status-no-show hover:bg-[#756033]"
                   : "bg-status-completed hover:opacity-90"
@@ -161,7 +161,7 @@ export default async function EditStaffPage({
             <ConfirmSubmitButton
               confirmation={`Permanently DELETE ${member.full_name} (${member.email})? This cannot be undone.`}
               disabled={!canDelete}
-              className="rounded-xl border border-status-cancelled bg-white px-4 py-2 text-sm font-bold text-status-cancelled transition-colors hover:bg-red-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy disabled:cursor-not-allowed disabled:opacity-40"
+              className="rounded-full border border-status-cancelled bg-white px-5 py-2.5 text-sm font-bold text-status-cancelled transition-all hover:-translate-y-0.5 hover:bg-[#fae3e2] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy disabled:cursor-not-allowed disabled:opacity-40"
             >
               Delete…
             </ConfirmSubmitButton>

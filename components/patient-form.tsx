@@ -8,13 +8,13 @@ import type { PatientActionState } from "@/lib/validation/patient";
 const INITIAL_STATE: PatientActionState = { status: "idle" };
 
 const inputClasses =
-  "mt-1.5 block w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-base text-gray-900 outline-none transition-colors placeholder:text-gray-400 focus:border-navy-light focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-navy-light";
-const labelClasses = "block text-sm font-medium text-gray-700";
+  "mt-1.5 block w-full rounded-full border-2 border-gray-200 bg-surface px-5 py-3 text-sm text-gray-900 outline-none transition-all duration-200 placeholder:text-gray-400 focus:border-accent focus:bg-white focus:shadow-pop";
+const labelClasses = "block text-sm font-bold text-gray-900";
 
 function FieldError({ message }: { message?: string }): React.ReactElement | null {
   if (!message) return null;
   return (
-    <p role="alert" className="mt-1.5 text-sm text-status-cancelled">
+    <p role="alert" className="mt-1.5 text-xs font-medium text-status-cancelled">
       {message}
     </p>
   );
@@ -57,7 +57,7 @@ export function PatientForm({
       {state.message && (
         <div
           role="alert"
-          className="rounded-xl border-l-4 border-status-cancelled bg-white px-4 py-3 text-sm text-gray-800 shadow-soft"
+          className="animate-pop-in rounded-2xl border-l-4 border-status-cancelled bg-[#fae3e2]/60 px-4 py-3 text-sm text-gray-800"
         >
           {state.message}
         </div>
@@ -65,7 +65,7 @@ export function PatientForm({
       {state.status === "saved" && (
         <p
           role="status"
-          className="rounded-xl border-l-4 border-status-completed bg-white px-4 py-3 text-sm text-gray-800 shadow-soft"
+          className="animate-pop-in rounded-2xl border-l-4 border-status-completed bg-[#dcf0e7]/60 px-4 py-3 text-sm text-gray-800"
         >
           Saved.
         </p>
@@ -157,7 +157,7 @@ export function PatientForm({
           defaultValue={initial?.address ?? ""}
           aria-invalid={state.fieldErrors?.address ? true : undefined}
           placeholder="Sub-city, woreda, house number…"
-          className={`${state.fieldErrors?.address ? "border-status-cancelled" : ""} ${inputClasses} resize-y`}
+          className={`${state.fieldErrors?.address ? "border-status-cancelled" : ""} mt-2 block w-full resize-y rounded-3xl border-2 border-gray-200 bg-surface px-4 py-3 text-sm text-gray-900 outline-none transition-all duration-200 placeholder:text-gray-400 focus:border-accent focus:bg-white focus:shadow-pop`}
         />
         <FieldError message={state.fieldErrors?.address} />
       </div>
@@ -181,7 +181,7 @@ export function PatientForm({
       <button
         type="submit"
         disabled={pending}
-        className="w-full rounded-full bg-navy py-2.5 text-center text-base font-bold text-white transition-colors hover:bg-navy-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy disabled:cursor-not-allowed disabled:opacity-60 active:scale-[0.98] sm:w-auto sm:min-w-[160px]"
+        className="w-full rounded-full bg-accent py-3.5 text-center font-display text-sm font-bold text-white shadow-pop transition-all hover:-translate-y-0.5 hover:bg-navy-light hover:shadow-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy disabled:cursor-not-allowed disabled:opacity-60 active:scale-[0.98] sm:w-auto sm:min-w-[160px]"
       >
         {pending
           ? mode === "create"

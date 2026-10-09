@@ -53,7 +53,7 @@ export default async function StaffListPage({
     <div className="mx-auto w-full max-w-6xl">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-navy">Manage staff accounts</h1>
+          <h1 className="font-display text-2xl font-bold text-gray-900">Manage staff accounts</h1>
           <p className="mt-1 text-sm text-gray-600">
             {staff.length} account{staff.length === 1 ? "" : "s"} · create, update,
             deactivate or remove team access (UC-02).
@@ -61,7 +61,7 @@ export default async function StaffListPage({
         </div>
         <Link
           href="/admin/staff/new"
-          className="rounded-full bg-navy px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-navy-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy"
+          className="rounded-full bg-accent px-5 py-2.5 font-display text-sm font-bold text-white shadow-pop transition-all hover:-translate-y-0.5 hover:bg-navy-light hover:shadow-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy"
         >
           + New account
         </Link>
@@ -74,7 +74,10 @@ export default async function StaffListPage({
         />
       )}
 
-      <div className="mt-8 overflow-x-auto rounded-2xl border border-gray-100 bg-white shadow-soft">
+      <p className="mt-8 text-xs text-gray-400 lg:hidden">
+          Swipe the table sideways to see all columns.
+        </p>
+        <div className="mt-2 overflow-x-auto rounded-3xl bg-white shadow-soft lg:mt-8">
         <table className="w-full min-w-[720px] text-left text-sm">
           <thead className="bg-navy-tint text-xs uppercase tracking-wider text-navy">
             <tr>
@@ -131,7 +134,7 @@ export default async function StaffListPage({
                           confirmation={`Deactivate ${member.full_name}? They will be signed out and unable to log in until reactivated.`}
                           disabled={isSelf}
                           title={isSelf ? "You cannot deactivate your own account" : undefined}
-                          className="rounded-full border border-gray-300 bg-white px-2 py-1 text-xs font-medium text-status-cancelled transition-colors hover:border-status-cancelled hover:bg-red-50 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-navy disabled:cursor-not-allowed disabled:opacity-40"
+                          className="rounded-full border border-gray-200 bg-white px-3 py-1.5 text-xs font-bold text-status-cancelled transition-all hover:-translate-y-0.5 hover:border-status-cancelled hover:bg-[#fae3e2] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-navy disabled:cursor-not-allowed disabled:opacity-40"
                         >
                           Deactivate
                         </ConfirmSubmitButton>
@@ -143,7 +146,7 @@ export default async function StaffListPage({
                         <input type="hidden" name="targetStatus" value="active" />
                         <ConfirmSubmitButton
                           confirmation={`Reactivate ${member.full_name}? Their failed-login counter will be reset.`}
-                          className="rounded-full border border-gray-300 bg-white px-2 py-1 text-xs font-medium text-status-completed transition-colors hover:border-status-completed hover:bg-green-50 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-navy"
+                          className="rounded-full border border-gray-200 bg-white px-3 py-1.5 text-xs font-bold text-status-completed transition-all hover:-translate-y-0.5 hover:border-status-completed hover:bg-[#dcf0e7] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-navy"
                         >
                           Reactivate
                         </ConfirmSubmitButton>

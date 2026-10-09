@@ -83,7 +83,7 @@ export function PatientSearchCombobox({
 
   if (chosen) {
     return (
-      <div className="flex items-center justify-between rounded-xl border border-navy-light bg-navy-tint px-4 py-3">
+      <div className="flex items-center justify-between rounded-full border-2 border-accent/30 bg-navy-tint px-4 py-3">
         <span className="text-sm font-semibold text-navy">
           {chosen.full_name}
           {chosen.patient_code && (
@@ -121,10 +121,10 @@ export function PatientSearchCombobox({
         placeholder="Type a name, code (P-0198) or phone…"
         aria-label="Search for the patient"
         autoComplete="off"
-        className="block w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-base text-gray-900 outline-none transition-colors placeholder:text-gray-400 focus:border-navy-light focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-navy-light"
+        className="block w-full rounded-full border-2 border-gray-200 bg-surface px-5 py-3 text-sm text-gray-900 outline-none transition-all duration-200 placeholder:text-gray-400 focus:border-accent focus:bg-white focus:shadow-pop"
       />
       {open && !stale && state.hits && state.hits.length > 0 && (
-        <ul className="absolute z-10 mt-1 max-h-64 w-full list-none overflow-auto rounded-xl border border-gray-100 bg-white p-0 shadow-lg">
+        <ul className="absolute z-10 mt-1 max-h-64 w-full list-none overflow-auto rounded-2xl border border-gray-100 bg-white p-1.5 shadow-pop">
           {state.hits.map((hit) => (
             <li key={hit.id}>
               <button

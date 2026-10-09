@@ -111,7 +111,11 @@ export function AppShell({
       </aside>
 
       <div className="flex min-w-0 flex-col">
-        <Topbar fullName={profile.full_name} role={profile.role} />
+        <Topbar
+          fullName={profile.full_name}
+          role={profile.role}
+          patientCount={patientCount}
+        />
         <main
           id="main-content"
           className={`mx-auto w-full ${WIDTHS[width]} flex-1 animate-fade-in px-4 py-8 sm:px-6 lg:px-10 lg:py-8`}

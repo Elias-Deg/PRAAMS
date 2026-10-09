@@ -48,13 +48,13 @@ export default async function NewAppointmentPage({
         ← Back to calendar
       </Link>
 
-      <h1 className="mt-4 text-2xl font-bold text-navy">Schedule appointment</h1>
+      <h1 className="mt-4 font-display text-2xl font-bold text-gray-900">Schedule appointment</h1>
       <p className="mt-1 text-sm text-gray-600">
         Booking as {actor.full_name}. Slots update live; if someone books the same slot
         first, the system will tell you before anything is saved (FR-15).
       </p>
 
-      <section className="mt-6 rounded-2xl border border-gray-100 bg-white p-6 shadow-soft">
+      <section className="mt-6 rounded-3xl bg-white p-6 shadow-soft">
         <AppointmentBookingForm hps={hpList} preselectedPatient={preselected} />
       </section>
     </div>

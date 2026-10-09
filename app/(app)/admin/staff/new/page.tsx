@@ -19,13 +19,13 @@ export default async function NewStaffPage(): Promise<React.ReactElement> {
         ← Back to staff list
       </Link>
 
-      <h1 className="mt-4 text-2xl font-bold text-navy">New staff account</h1>
+      <h1 className="mt-4 font-display text-2xl font-bold text-gray-900">New staff account</h1>
       <p className="mt-1 text-sm text-gray-600">
         Creates a Supabase Auth login plus the matching profile row. The account becomes
         usable immediately after creation.
       </p>
 
-      <section className="mt-6 rounded-2xl border border-gray-100 bg-white p-6 shadow-soft">
+      <section className="mt-6 rounded-3xl bg-white p-6 shadow-soft">
         <StaffAccountForm mode="create" />
       </section>
     </div>

@@ -68,7 +68,7 @@ export default async function AppointmentDetailPage({
       </Link>
 
       <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl font-bold text-navy">
+        <h1 className="font-display text-2xl font-bold text-gray-900">
           {DATETIME_FMT.format(new Date(appt.date_time))}
         </h1>
         <span
@@ -93,7 +93,7 @@ export default async function AppointmentDetailPage({
       )}
 
       {/* --- SUMMARY --- */}
-      <section className="mt-6 rounded-2xl border border-gray-100 bg-white p-6 shadow-soft">
+      <section className="mt-6 rounded-3xl bg-white p-6 shadow-soft">
         <dl className="grid gap-x-8 gap-y-4 sm:grid-cols-2">
           <div>
             <dt className="text-xs font-medium uppercase tracking-wide text-gray-400">Patient</dt>
@@ -138,7 +138,7 @@ export default async function AppointmentDetailPage({
       {isScheduled ? (
         mayManage ? (
           <section className="mt-8 grid gap-6 lg:grid-cols-[1fr_auto]">
-            <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-soft">
+            <div className="rounded-3xl bg-white p-6 shadow-soft">
               <h2 className="text-sm font-bold uppercase tracking-wider text-gray-500">
                 Reschedule
               </h2>
@@ -164,7 +164,7 @@ export default async function AppointmentDetailPage({
                 <input type="hidden" name="id" value={appt.id} />
                 <ConfirmSubmitButton
                   confirmation={`Cancel ${appt.patient?.full_name ?? "this patient"}'s appointment on ${DATETIME_FMT.format(new Date(appt.date_time))}?`}
-                  className="w-full rounded-xl border border-status-cancelled bg-white px-4 py-2.5 text-sm font-bold text-status-cancelled transition-colors hover:bg-red-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy"
+                  className="w-full rounded-full border border-status-cancelled bg-white px-5 py-2.5 text-sm font-bold text-status-cancelled transition-all hover:-translate-y-0.5 hover:bg-[#fae3e2] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy"
                 >
                   Cancel appointment…
                 </ConfirmSubmitButton>
@@ -172,13 +172,13 @@ export default async function AppointmentDetailPage({
             </div>
           </section>
         ) : (
-          <p className="mt-8 rounded-2xl border-l-4 border-navy-light bg-navy-tint px-4 py-3 text-sm text-navy-dark">
+          <p className="mt-8 animate-pop-in rounded-2xl border-l-4 border-accent bg-navy-tint px-4 py-3 text-sm text-navy-dark">
             Rescheduling and cancellation are handled by reception. Contact the front
             desk for changes to this visit.
           </p>
         )
       ) : (
-        <p className="mt-8 rounded-2xl bg-gray-50 px-4 py-3 text-sm text-gray-500">
+        <p className="mt-8 rounded-2xl bg-surface px-4 py-3 text-sm text-gray-500">
           This appointment is <strong>{appt.status === "no_show" ? "marked as a no-show" : appt.status}</strong>{" "}
           and is read-only.
         </p>

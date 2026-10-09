@@ -163,6 +163,11 @@ components/
                               search (GET /patients?q=), appointments bell, user chip
   shell-nav.tsx               client nav (pathname-active, blue pill) used by AppShell
   grouped-bars.tsx            dependency-free booked/completed grouped bar chart
+  dashboard/card.tsx          dashboard primitives: Card, StatTile, StatusSplit
+                              (live status distribution), OutcomeRow, EmptyNote
+  dashboard/admin-dashboard.tsx        clinic KPIs, staff on duty, audit trail
+  dashboard/receptionist-dashboard.tsx today's flow, registrations, shortcuts
+  dashboard/hp-dashboard.tsx           own day, own outcomes, own documentation
   schedule/mini-calendar.tsx  client mini month picker (dots on busy days → Day view)
   schedule/time-grid.tsx      continuous EAT time grid, pastel status blocks, now-line
   schedule/month-grid.tsx     compact month view with per-day event chips
@@ -178,6 +183,8 @@ components/
   staff-account-form.tsx · patient-form.tsx · record-form.tsx
   appointment-booking-form.tsx · appointment-reschedule-form.tsx
 lib/
+  ui.ts                       §14 theme strings: pill fields, accent pills, cards,
+                              banners, tiles, chips — single source of truth
   constants.ts                LOCKOUT_*/INACTIVITY_* single source (mirrored in SQL!)
   audit.ts                    writeAuditLog()
   auth/session.ts             getCurrentProfile() cached · requireAdministrator()
@@ -292,12 +299,12 @@ every toggle audited.
 | Route | Use case | State | Key notes |
 |---|---|---|---|
 | `/login` | UC-01 | ✅ | Zod dual validation; lockout notices; idle-return banner `?reason=idle`; v2 welcome-panel design (§14) |
-| `/dashboard` | landing | ✅ | dashboard-v2 reference cards: outcome rates, AM/PM sessions, booked-vs-completed week chart, status split |
+| `/dashboard` | landing | ✅ | **role-specific workspaces** (§14): admin = clinic KPIs + staff on duty + audit trail; receptionist = today's flow + registrations + shortcuts; clinician = own day + own outcomes + documentation count — all live queries |
 | `/admin/staff` (+`/new`,`/[id]`) | UC-02 | ✅ | CRUD+status lifecycle, guardrails §4.2, notice map dictionary |
 | `/admin/permissions` | UC-03 | ✅ | matrix editor; narrow-only semantics |
-| `/patients` (search) | UC-06 | ✅ | name/code/phone merge-search; paginated recent register; empty states |
+| `/patients` (search) | UC-06 | ✅ | name/code/phone merge-search; paginated recent register; empty states; register v2 (§14): gradient hero w/ live counts, pill search + rows |
 | `/patients/new` | UC-04 | ✅ | FR-07 duplicate **flag-don't-block** via `?dup=` banner |
-| `/patients/[id]` | UC-05 view/UC-08 | ✅ | demographics card, registrar attribution, permanent history timeline w/ author embed |
+| `/patients/[id]` | UC-05 view/UC-08 | ✅ | demographics card, registrar attribution, permanent history timeline w/ author embed; detail v2 (§14): gradient patient hero w/ action pills, detail tiles, animated timeline |
 | `/patients/[id]/edit` | UC-05 update | ✅ | gated `patients.edit`; RLS-path update; audit UPDATE_PATIENT |
 | `/patients/[id]/records/new` | UC-07 | 🚧 form shipped · E2E of addMedicalRecord pending manual browser pass | gated `records.add`; permanence warning inline |
 | `/appointments` | UC-11 | ✅ | schedule v2 (§14 reference design): time-grid Weekly/Daily + Monthly views, mini-cal side panel, staff/status filters, now-line, event blocks → detail |
@@ -627,6 +634,108 @@ Open assumptions to revisit with the client/document if graded on them:
   embeds, detail links, empty-state CTA. Verified: lint 0 · build 0 ·
   13-check live smoke (all three views over a real seeded appointment,
   staff + status filters, toast, receptionist render, anon gate).
+- **2026-08-29 · Patient register v2 (§14 design language)**: restyled UC-06
+  to match the login/dashboard language. New gradient hero banner (accent →
+  accent-light, drifting bubbles) carrying live stats — **On file** total and
+  **+N This month** registrations (two count queries) — plus the white
+  "Register patient" pill (mayRegister-gated). Search is now a large pill
+  input with an embedded accent Search button. Results converted from a table
+  to a white rounded card of **pill rows** (avatar, name + code chip, age /
+  gender / phone meta, registered date, wiggle-on-hover chevron) with a
+  staggered pop-in (45ms cascade, capped at 12). Pagination became pill
+  buttons; empty states bubbly with contextual CTA. Search/merge logic,
+  pagination, permissions untouched. Loading skeleton restyled to match
+  (gradient bar + pill-row pulses). Verified: lint 0 · build 0 · 13-check
+  live smoke (hero, stats, pills, search by code, empty state, receptionist
+  render, HP permission gating, anon gate, skeleton).
+- **2026-08-29 · Patient detail v2 (§14 design language)**: restyled UC-05/08
+  to match the register/login language. **Gradient patient hero** (accent →
+  accent-light, drifting bubbles) with the white avatar circle (login logo
+  spot), Poppins name + code chip, demographics line, and permission-gated
+  action pills (Book appointment / Edit details as glass pills, Add clinical
+  entry as the white primary pill). Demographics became a card of soft
+  **detail tiles** (address, emergency contact, registered-by, code).
+  **Medical history** is now a white card with an accent-tinted vertical
+  timeline: each entry is a soft tile (diagnosis, timestamp, notes, author +
+  permanence note) popping in with a 60ms stagger; latest entry gets the
+  accent dot. Empty history has a bubbly CTA. FR-07 duplicate banner restyled
+  amber. All queries, permission gates (verified against the real
+  role_permissions matrix: records.add = HP-only, appointments.schedule =
+  receptionist+admin, patients.edit = all), toasts and permanence semantics
+  untouched. Loading skeleton matches (gradient bar, tile pulses, timeline
+  pulses). Verified: lint 0 · build 0 · 13-check live smoke over P-0198
+  (hero, avatar spot, pills per role, tiles, timeline stagger, count chip,
+  HP gating, anon gate, skeleton).
+- **2026-08-29 · App-wide theme sweep (§14 everywhere)**: made the login
+  language mandatory across the whole product. Added `lib/ui.ts` as the single
+  source of truth for theme strings (pill field, textarea, label,
+  primary/secondary/back pills, card, page title, error/success/warning
+  banners, field error, tile, chip) so future screens cannot drift. Then
+  swept every remaining surface with literal replacements: all five form
+  bodies (patient, record, staff, booking, reschedule) now use pill fields
+  with white-fill + blue-ring focus, Poppins accent submit pills and soft
+  pop-in banners; admin pages (staff list/new/[id], permissions, reports)
+  traded bordered `rounded-2xl` cards for borderless `rounded-3xl`, and navy
+  buttons / `text-navy` headings became accent pills and Poppins ink
+  headings; the detail & form routes (patients/new, [id]/edit,
+  [id]/records/new, appointments/new, appointments/[id]) got the same
+  treatment; slot-picker, patient-search-combobox, permission-toggle,
+  skeleton, skip-link, 404 and error screens were all restyled (the skip-link
+  was the last navy element rendering on every page). The three remaining
+  loading skeletons (staff, reports, appointments) were rewritten in the
+  themed shape. Verified: lint 0 · build 0 · **20-check route-wide audit** —
+  all 15 admin routes plus 2 HP routes return 200 with theme markers present
+  and zero old-navy markers, plus 404/error/login regressions. Note: table
+  headers keep the in-family `bg-navy-tint` chip treatment deliberately.
+- **2026-08-29 · Mock-data audit + role-specific dashboards**: swept every
+  route for static/demo content. Findings: no Lorem/placeholder arrays or
+  hardcoded people anywhere, but two real problems — the dashboard's "By
+  status" card drew a **decorative world map** with fixed dot coordinates
+  implying geography PRAAMS does not have, and all roles shared one
+  **identical dashboard**. Fixes: (1) the map is gone, replaced by
+  `StatusSplit` — a segmented bar + legend computed from live appointment
+  statuses (with an accessible aria description); (2) `/dashboard` now branches
+  per role into three genuinely different workspaces built from new
+  `components/dashboard/*`: **administrator** = clinic KPIs (patients
+  registered, appointments today, active staff, audit events in 7 days),
+  clinic-wide weekly chart, staff-on-duty-today leaderboard, newest audit
+  entries humanized from the §6.4 action catalogue; **receptionist** = today's
+  schedule list (time, patient, code, clinician, status → appointment),
+  bookings in the next 7 days, new registrations (count + latest five), and
+  front-desk shortcut pills; **healthcare professional** = own day (→ patient
+  record), own weekly chart, own outcome rates, entries authored in 30 days —
+  every query scoped by `staff_id`. Admin keeps its reducible extras
+  (`/admin/reports` link), reception keeps the appointment-management focus,
+  clinicians get zero clinic-wide analytics. Verified: lint 0 · build 0 ·
+  14-check role audit — each role renders only its own cards (cross-checks
+  prove the other two layouts are absent), KPI tiles match live DB counts
+  exactly (patients 2/2, staff 6/6), all three carry zero static artefacts
+  (checked for the reference-design leftovers: "On progress", "Task A",
+  "By Country", demo names) and all three keep the §14 theme. Also fixed a
+  corrupted generated `.next/dev/types/validator.ts` (interrupted write) that
+  was failing type-check with a bogus parse error.
+- **2026-08-29 · Mobile responsive pass**: made every surface work from phone
+  up to desktop. Shell: the top bar was desktop-only, so phones lost search and
+  identity — it is now a **sticky mobile header** (avatar + name + role, the
+  real patient search taking the remaining width, appointments bell) that
+  becomes the full desktop bar at `lg`; a live patients-count chip was added
+  to the desktop cluster (the sidebar hero stays desktop-only to keep the
+  phone header short). Sidebar nav **labels are now visible on phones** too
+  (they were icons-only, which also left icon links with no accessible name —
+  fixed). Dashboards: KPI tiles go **2-up on phones** instead of stacking
+  1-per-row. Schedule: the time gutter is **sticky while the week scrolls**
+  horizontally, the calendar now renders **before** the side panel on phones
+  (`order-*`), and a "swipe the grid sideways" hint appears under the week
+  view. Wide tables (staff, reports) keep their scroll containers and gained
+  the same swipe hint; the permissions matrix already stacks as cards. Heroes
+  scale down (`text-2xl sm:text-3xl`, avatar `h-16 sm:h-20`), the register
+  search gained tighter small-screen padding (`pr-26 sm:pr-32`), the login
+  panel padding tightened on phones, and the toast is now edge-to-edge at the
+  bottom on phones (`inset-x-4`) instead of a fixed right offset that could
+  overflow, with the themed `shadow-pop`. Verified: lint 0 · build 0 ·
+  14-check responsive audit (sticky header, mobile identity, nav labels, 2-up
+  tiles, sticky gutter, ordering, hero scaling, table hints, stacking, login
+  layout).
 
 
 

@@ -93,7 +93,7 @@ export function TimeGrid({
     <div className="overflow-x-auto rounded-3xl bg-white shadow-soft">
       <div className="min-w-[840px]">
         <div className="flex border-b border-gray-100">
-          <div className="w-16 shrink-0 self-center px-1 text-center text-[9px] font-bold uppercase leading-tight tracking-wide text-gray-400">
+          <div className="sticky left-0 z-20 w-16 shrink-0 self-center bg-white px-1 text-center text-[9px] font-bold uppercase leading-tight tracking-wide text-gray-400">
             EAT
             <br />
             +03:00
@@ -103,7 +103,7 @@ export function TimeGrid({
           ))}
         </div>
         <div className="flex" style={{ height: totalH }}>
-          <div className="relative w-16 shrink-0">
+          <div className="sticky left-0 z-20 w-16 shrink-0 bg-white">
             {Array.from({ length: hourCount }, (_, i) => (
               <span
                 key={i}

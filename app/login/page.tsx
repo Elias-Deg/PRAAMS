@@ -33,7 +33,7 @@ export default async function LoginPage({
     >
       <div className="grid w-full max-w-4xl animate-pop-in overflow-hidden rounded-3xl bg-white shadow-soft lg:grid-cols-[45%_1fr]">
         {/* Welcome panel — blue gradient with a wavy edge into the form side */}
-        <section className="relative isolate bg-gradient-to-b from-accent to-accent-light px-8 py-12 text-white sm:px-10 lg:py-14">
+        <section className="relative isolate bg-gradient-to-b from-accent to-accent-light px-7 py-10 text-white sm:px-10 lg:py-14">
           <svg
             aria-hidden
             viewBox="0 0 40 640"

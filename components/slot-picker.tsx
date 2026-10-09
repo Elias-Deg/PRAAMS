@@ -78,7 +78,7 @@ export function SlotPicker({
 
   if (!validParams) {
     return (
-      <p className="rounded-xl bg-gray-50 px-4 py-3 text-sm text-gray-500">
+      <p className="rounded-2xl bg-surface px-4 py-3 text-sm text-gray-500">
         Choose a healthcare professional to load available slots.
       </p>
     );
@@ -94,7 +94,7 @@ export function SlotPicker({
 
   if (state.error) {
     return (
-      <p role="alert" className="rounded-xl border-l-4 border-status-cancelled bg-white px-4 py-3 text-sm text-gray-700">
+      <p role="alert" className="animate-pop-in rounded-2xl border-l-4 border-status-cancelled bg-[#fae3e2]/60 px-4 py-3 text-sm text-gray-700">
         Could not load time slots. Please try again.
       </p>
     );
@@ -102,7 +102,7 @@ export function SlotPicker({
 
   if (state.closed) {
     return (
-      <p className="rounded-xl bg-gray-50 px-4 py-3 text-sm text-gray-500">
+      <p className="rounded-2xl bg-surface px-4 py-3 text-sm text-gray-500">
         The clinic is closed on {date} (Sundays). Pick another day.
       </p>
     );
@@ -112,7 +112,7 @@ export function SlotPicker({
   const selectable = slots.filter((slot) => slot.available);
   if (selectable.length === 0) {
     return (
-      <p className="rounded-xl bg-gray-50 px-4 py-3 text-sm text-gray-500">
+      <p className="rounded-2xl bg-surface px-4 py-3 text-sm text-gray-500">
         No free slots on {date}
         {date === todayInAddis() ? " (remaining today)" : ""}. Try another day.
       </p>
@@ -121,7 +121,7 @@ export function SlotPicker({
 
   return (
     <fieldset>
-      <legend className="text-xs font-bold uppercase tracking-wider text-navy">
+      <legend className="text-xs font-bold uppercase tracking-wider text-gray-400">
         Available time slots
       </legend>
       <div className="mt-2 flex flex-wrap gap-2">
@@ -137,10 +137,10 @@ export function SlotPicker({
               onClick={() => enabled && onSelect(slot.iso)}
               className={`rounded-full border px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy active:scale-[0.95] ${
                 isSelected
-                  ? "border-navy bg-navy text-white"
+                  ? "border-accent bg-accent text-white shadow-pop"
                   : enabled
-                    ? "border-navy-light bg-white text-navy hover:bg-navy-tint"
-                    : "cursor-not-allowed border-gray-100 bg-gray-50 text-gray-400"
+                    ? "border-gray-200 bg-white text-navy hover:-translate-y-0.5 hover:border-accent hover:shadow-soft"
+                    : "cursor-not-allowed border-gray-100 bg-surface text-gray-300"
               }`}
             >
               {slot.label}

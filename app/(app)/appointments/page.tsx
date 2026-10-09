@@ -251,7 +251,7 @@ function ScheduleScreen(p: ScreenProps): React.ReactElement {
         urlFor={urlFor}
       />
 
-      <div className="min-w-0 flex-1">
+      <div className="order-1 min-w-0 flex-1 lg:order-2">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h1 className="font-display text-2xl font-bold text-gray-900">Schedule</h1>
           {p.maySchedule && (
@@ -325,8 +325,13 @@ function ScheduleScreen(p: ScreenProps): React.ReactElement {
                 nowMinutes={p.now ? p.now.minutes : null}
                 nowLabel={p.now ? p.now.label : ""}
               />
+              {p.view === "week" && (
+                <p className="mt-2 text-xs text-gray-400 lg:hidden">
+                  Swipe the grid sideways to see the whole week.
+                </p>
+              )}
               {p.events.length === 0 && (
-                <div className="mt-4 rounded-3xl border border-gray-100 bg-white p-6 text-center shadow-soft">
+                <div className="mt-4 rounded-3xl bg-white p-6 text-center shadow-soft">
                   <p className="text-sm font-semibold text-gray-800">
                     No appointments {p.view === "week" ? "this week" : "on this day"}
                     {p.staffFilter ? " for this professional" : ""}.

@@ -55,7 +55,7 @@ export function ShellNav({ role }: { role: UserRole }): React.ReactElement {
               }`}
             >
               <Icon name={item.icon} className="h-5 w-5 shrink-0" />
-              <span className="hidden lg:inline">{item.label}</span>
+              <span>{item.label}</span>
             </Link>
           </li>
         );

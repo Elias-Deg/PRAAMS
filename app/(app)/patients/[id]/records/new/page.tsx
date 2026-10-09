@@ -32,7 +32,7 @@ export default async function NewRecordPage({
         ← Back to patient record
       </Link>
 
-      <h1 className="mt-4 text-2xl font-bold text-navy">Add clinical entry</h1>
+      <h1 className="mt-4 font-display text-2xl font-bold text-gray-900">Add clinical entry</h1>
       <p className="mt-1 flex items-center gap-2 text-sm text-gray-600">
         For{" "}
         <span className="font-semibold text-gray-900">{patient.full_name}</span>
@@ -41,7 +41,7 @@ export default async function NewRecordPage({
         </span>
       </p>
 
-      <section className="mt-6 rounded-2xl border border-gray-100 bg-white p-6 shadow-soft">
+      <section className="mt-6 rounded-3xl bg-white p-6 shadow-soft">
         <RecordForm patientId={patient.id} />
       </section>
     </div>

@@ -26,10 +26,10 @@ export function Toast({
     <div
       role="status"
       aria-live="polite"
-      className="animate-toast-in fixed bottom-5 right-5 z-50 print:hidden"
+      className="animate-toast-in fixed inset-x-4 bottom-4 z-50 sm:inset-x-auto sm:bottom-5 sm:right-5 sm:max-w-sm print:hidden"
     >
       <div
-        className={`flex items-center gap-3 rounded-2xl border-l-4 bg-white px-4 py-3 shadow-lg ${
+        className={`flex items-center gap-3 rounded-2xl border-l-4 bg-white px-4 py-3 shadow-pop ${
           tone === "error" ? "border-status-cancelled" : "border-status-completed"
         }`}
       >

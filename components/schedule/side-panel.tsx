@@ -52,7 +52,7 @@ export function SidePanel({
   urlFor: (over: Record<string, string | undefined>) => string;
 }): React.ReactElement {
   return (
-    <aside className="w-full shrink-0 space-y-4 lg:w-64">
+    <aside className="order-2 w-full shrink-0 space-y-4 lg:order-1 lg:w-64">
       <MiniCalendar
         selectedDate={selectedDate}
         eventDays={eventDays}

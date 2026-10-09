@@ -32,7 +32,7 @@ export default async function EditPatientPage({
         ← Back to patient record
       </Link>
 
-      <h1 className="mt-4 text-2xl font-bold text-navy">Edit demographics</h1>
+      <h1 className="mt-4 font-display text-2xl font-bold text-gray-900">Edit demographics</h1>
       <p className="mt-1 flex items-center gap-2 text-sm text-gray-600">
         <span className="rounded-full bg-navy-tint px-2 py-0.5 text-xs font-bold text-navy">
           {patient.patient_code}
@@ -40,7 +40,7 @@ export default async function EditPatientPage({
         Updates are logged to the audit trail (UC-05).
       </p>
 
-      <section className="mt-6 rounded-2xl border border-gray-100 bg-white p-6 shadow-soft">
+      <section className="mt-6 rounded-3xl bg-white p-6 shadow-soft">
         <PatientForm
           mode="edit"
           patientId={patient.id}

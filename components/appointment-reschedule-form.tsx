@@ -35,7 +35,7 @@ export function AppointmentRescheduleForm({
       {state.message && (
         <div
           role="alert"
-          className="rounded-xl border-l-4 border-status-cancelled bg-white px-4 py-3 text-sm text-gray-800 shadow-soft"
+          className="animate-pop-in rounded-2xl border-l-4 border-status-cancelled bg-[#fae3e2]/60 px-4 py-3 text-sm text-gray-800"
         >
           {state.message}
         </div>
@@ -74,14 +74,14 @@ export function AppointmentRescheduleForm({
           name="reason"
           rows={2}
           defaultValue={currentReason}
-          className={`${inputClasses} resize-y`}
+          className={`mt-2 block w-full resize-y rounded-3xl border-2 border-gray-200 bg-surface px-4 py-3 text-sm text-gray-900 outline-none transition-all duration-200 placeholder:text-gray-400 focus:border-accent focus:bg-white focus:shadow-pop`}
         />
       </div>
 
       <button
         type="submit"
         disabled={pending || slot === null}
-        className="w-full rounded-full bg-navy py-2.5 text-center text-base font-bold text-white transition-colors hover:bg-navy-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy disabled:cursor-not-allowed disabled:opacity-50 active:scale-[0.98] sm:w-auto sm:min-w-[180px]"
+        className="w-full rounded-full bg-accent py-3.5 text-center font-display text-sm font-bold text-white shadow-pop transition-all hover:-translate-y-0.5 hover:bg-navy-light hover:shadow-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy disabled:cursor-not-allowed disabled:opacity-50 active:scale-[0.98] sm:w-auto sm:min-w-[180px]"
       >
         {pending ? "Rescheduling…" : "Confirm new time"}
       </button>

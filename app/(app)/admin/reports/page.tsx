@@ -16,8 +16,8 @@ export const metadata: Metadata = {
 };
 
 const inputClasses =
-  "mt-1.5 block w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 outline-none transition-colors focus:border-navy-light focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-navy-light";
-const labelClasses = "block text-sm font-medium text-gray-700";
+  "mt-1.5 block w-full rounded-full border-2 border-gray-200 bg-surface px-5 py-3 text-sm text-gray-900 outline-none transition-all duration-200 focus:border-accent focus:bg-white focus:shadow-pop";
+const labelClasses = "block text-sm font-bold text-gray-900";
 
 /** UC-12 · FR-18/19 — generate, view, print or export administrative reports. */
 export default async function ReportsPage({
@@ -49,7 +49,7 @@ export default async function ReportsPage({
         ← Back to dashboard
       </Link>
 
-      <h1 className="mt-4 text-2xl font-bold text-navy">Administrative reports</h1>
+      <h1 className="mt-4 font-display text-2xl font-bold text-gray-900">Administrative reports</h1>
       <p className="mt-1 text-sm text-gray-600">
         Generate date-range reports, view them on screen, print (or save as PDF) and
         export CSV — UC-12.
@@ -59,7 +59,7 @@ export default async function ReportsPage({
       <form
         action="/admin/reports"
         method="get"
-        className="mt-6 grid items-end gap-4 rounded-2xl border border-gray-100 bg-white p-5 shadow-soft sm:grid-cols-[1.4fr_1fr_1fr_auto] print:hidden"
+        className="mt-6 grid items-end gap-4 rounded-3xl bg-white p-5 shadow-soft sm:grid-cols-[1.4fr_1fr_1fr_auto] print:hidden"
       >
         <div>
           <label htmlFor="type" className={labelClasses}>
@@ -87,7 +87,7 @@ export default async function ReportsPage({
         </div>
         <button
           type="submit"
-          className="h-[42px] rounded-full bg-navy px-5 text-sm font-bold text-white transition-colors hover:bg-navy-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy"
+          className="h-[42px] rounded-full bg-accent px-6 font-display text-sm font-bold text-white shadow-pop transition-all hover:-translate-y-0.5 hover:bg-navy-light hover:shadow-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy"
         >
           Generate
         </button>
@@ -103,7 +103,7 @@ export default async function ReportsPage({
         <section className="mt-8">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h2 className="text-lg font-bold text-navy">{report.title}</h2>
+              <h2 className="font-display text-lg font-bold text-gray-900">{report.title}</h2>
               <p className="text-sm text-gray-500">
                 {from} → {to}
               </p>
@@ -112,7 +112,7 @@ export default async function ReportsPage({
               <PrintButton />
               <a
                 href={exportHref}
-                className="rounded-full bg-navy px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-navy-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy"
+                className="rounded-full bg-accent px-5 py-2.5 font-display text-sm font-bold text-white shadow-pop transition-all hover:-translate-y-0.5 hover:bg-navy-light hover:shadow-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy"
               >
                 Export CSV
               </a>
@@ -133,7 +133,7 @@ export default async function ReportsPage({
           </div>
 
           {report.truncated && (
-            <p className="mt-3 rounded-xl border-l-4 border-status-no-show bg-white px-4 py-2.5 text-xs text-gray-600 shadow-soft">
+            <p className="mt-3 rounded-2xl border-l-4 border-status-no-show bg-[#f5ebd8]/60 px-4 py-2.5 text-xs text-gray-600">
               Showing the latest 500 rows — the full count is in the summary. Narrow the
               date range to see everything on screen.
             </p>
@@ -141,13 +141,17 @@ export default async function ReportsPage({
 
           {/* --- REPORT TABLE --- */}
           {report.rows.length === 0 ? (
-            <div className="mt-4 rounded-2xl border border-gray-100 bg-white p-10 text-center shadow-soft">
+            <div className="mt-4 rounded-3xl bg-white p-10 text-center shadow-soft">
               <p className="text-sm font-semibold text-gray-800">No data for this range</p>
               <p className="mt-1 text-sm text-gray-500">Try a wider date range.</p>
             </div>
           ) : (
-            <div className="mt-4 overflow-x-auto rounded-2xl border border-gray-100 bg-white shadow-soft">
-              <table className="w-full min-w-[720px] text-left text-sm">
+            <>
+              <p className="mt-4 text-xs text-gray-400 lg:hidden">
+                Swipe the table sideways to see all columns.
+              </p>
+              <div className="mt-2 overflow-x-auto rounded-3xl bg-white shadow-soft lg:mt-4">
+                <table className="w-full min-w-[720px] text-left text-sm">
                 <thead className="bg-navy-tint text-xs uppercase tracking-wider text-navy">
                   <tr>
                     {report.columns.map((column) => (
@@ -169,7 +173,8 @@ export default async function ReportsPage({
                   ))}
                 </tbody>
               </table>
-            </div>
+              </div>
+            </>
           )}
         </section>
       )}

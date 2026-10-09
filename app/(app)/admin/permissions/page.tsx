@@ -33,7 +33,7 @@ export default async function PermissionsPage({
 
   return (
     <div className="mx-auto w-full max-w-5xl">
-      <h1 className="text-2xl font-bold text-navy">Role-based access permissions</h1>
+      <h1 className="font-display text-2xl font-bold text-gray-900">Role-based access permissions</h1>
       <p className="mt-1 max-w-3xl text-sm text-gray-600">
         Configure which capabilities each role holds (UC-03). Toggles can only{" "}
         <strong>narrow</strong> what the database&apos;s Row Level Security baseline already
@@ -47,7 +47,7 @@ export default async function PermissionsPage({
         {ALL_ROLES.map((role) => (
           <section
             key={role}
-            className="rounded-2xl border border-gray-100 bg-white p-5 shadow-soft"
+            className="rounded-3xl bg-white p-5 shadow-soft"
           >
             <header className="border-b border-gray-100 pb-3">
               <RoleBadge role={role} />
@@ -88,7 +88,7 @@ export default async function PermissionsPage({
         ))}
       </div>
 
-      <p className="mt-8 rounded-2xl border-l-4 border-navy-light bg-navy-tint px-4 py-3 text-sm text-navy-dark">
+      <p className="mt-8 animate-pop-in rounded-2xl border-l-4 border-accent bg-navy-tint px-4 py-3 text-sm text-navy-dark">
         Signed in as {actor.full_name}. Every toggle here is written to the audit trail,
         and grants take effect immediately across all admin screens and server actions.
         Need staff changes instead? Head to{" "}

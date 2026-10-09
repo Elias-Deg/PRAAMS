@@ -14,7 +14,7 @@ export default function GlobalError({
       <p className="text-xs font-bold uppercase tracking-widest text-status-cancelled">
         Something went wrong
       </p>
-      <h1 className="mt-2 text-2xl font-bold text-navy">This view failed to load</h1>
+      <h1 className="mt-2 font-display text-2xl font-bold text-gray-900">This view failed to load</h1>
       <p className="mt-3 text-sm text-gray-600">
         The problem has been contained to this screen. Try again, and if it keeps
         happening, note this reference for support:{" "}
@@ -25,7 +25,7 @@ export default function GlobalError({
       <button
         type="button"
         onClick={reset}
-        className="mt-6 rounded-full bg-navy px-5 py-2.5 text-sm font-bold text-white transition-colors hover:bg-navy-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy"
+        className="mt-6 rounded-full bg-accent px-5 py-2.5 font-display text-sm font-bold text-white shadow-pop transition-all hover:-translate-y-0.5 hover:bg-navy-light hover:shadow-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy"
       >
         Try again
       </button>
